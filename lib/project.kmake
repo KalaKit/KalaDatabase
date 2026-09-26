@@ -1,0 +1,51 @@
+//Build script for use with kalamake. Read more at https://github.com/kalakit/kalamake
+
+#version 1.0
+
+#references
+name_bin: kaladatabase
+dir_release: build/release-
+dir_debug: build/debug-
+
+#global
+compilerlauncher: ccache
+compiler: clang++
+standard: c++20
+binarytype: static
+sources: "src"
+headers: "include", "../../external-shared/KalaHeaders/include"
+defines: LIB_STATIC
+warninglevel: normal
+customflags: export-compile-commands, export-vscode-sln
+
+#profile debug-windows
+binaryname: ${name_bin}d
+buildtype: debug
+buildpath: "${dir_debug}windows"
+
+#profile release-windows
+binaryname: ${name_bin}
+buildtype: minsizerel
+buildpath: "${dir_release}windows"
+
+#profile debug-windows-gnu
+targettype: windows-gnu
+binaryname: ${name_bin}-gnud
+buildtype: debug
+buildpath: "${dir_debug}windows-gnu"
+
+#profile release-windows-gnu
+targettype: windows-gnu
+binaryname: ${name_bin}-gnu
+buildtype: minsizerel
+buildpath: "${dir_release}windows-gnu"
+
+#profile debug-linux
+binaryname: lib${name_bin}d
+buildtype: debug
+buildpath: "${dir_debug}linux"
+
+#profile release-linux
+binaryname: lib${name_bin}
+buildtype: minsizerel
+buildpath: "${dir_release}linux"
