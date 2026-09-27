@@ -72,7 +72,7 @@ namespace KalaDatabase::Core
             const path& databasePath,
             bool relativeToExe = true,
             bool override = false);
-        //Loads the on-disk user list from a '.kdb' file to memory,
+        //Loads the on-disk database from a '.kdb' file to memory,
         //accepts absolute path and path relative to executable,
         //set relativeToExe to true if you want this file to be loaded relative to the exe dir,
         //can only be called by root, logs off all logged in users except root

@@ -121,8 +121,7 @@ namespace KalaDatabase::Users
         //Get all user IDs in this group
         const vector<u32>& GetUserIDs() const;
         //Get all tables this group can read,
-        //Root can modify all tables,
-        //users with the T_FULL table permission can modify all tables
+        //Root can modify all tables
         const vector<u32>& GetTableIDs() const;
 
         const string& GetGroupName(u32 callerID) const;
