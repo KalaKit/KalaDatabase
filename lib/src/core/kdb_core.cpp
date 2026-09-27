@@ -4,6 +4,14 @@
 //Read LICENSE.md for more information.
 
 #include "core/kdb_core.hpp"
+
+#if defined(KWIN_ANY)
+#include <windows.h>
+#else
+#include <csignal>
+#include <linux/limits.h>
+#endif
+
 #include "users/kdb_user.hpp"
 #include "users/kdb_group.hpp"
 
@@ -18,8 +26,11 @@ using KalaDatabase::Users::Group;
 using std::string;
 using std::vector;
 using std::function;
+using std::filesystem::path;
 
 static bool isVerboseLoggingEnabled{};
+
+static path exePath{};
 
 static u32 globalID{};
 
@@ -34,6 +45,50 @@ namespace KalaDatabase::Core
 
     u32 KalaDatabaseCore::GetGlobalID() { return globalID; }
 	void KalaDatabaseCore::SetGlobalID(u32 newID) { globalID = newID; }
+
+	path KalaDatabaseCore::GetExePath()
+	{
+		if (!exePath.empty()) return exePath;
+
+#if defined(KWIN_ANY)
+		wchar_t buffer[MAX_PATH]{};
+		DWORD length = GetModuleFileNameW(
+			nullptr,
+			buffer,
+			MAX_PATH);
+
+		if (length > 0
+			&& length < MAX_PATH)
+		{	
+			exePath = path(buffer);
+		}
+		else
+		{
+			ForceClose(
+				"KalaWindow core error",
+				"Failed to get path to executable!");
+		}
+#else
+		char buffer[PATH_MAX]{};
+		ssize_t length = readlink(
+			"/proc/self/exe",
+			buffer,
+			sizeof(buffer) - 1);
+
+		if (length > 0)
+		{
+			buffer[length] = '\0';
+			exePath = path(buffer);
+		}
+		else
+		{
+			ForceClose(
+				"KalaWindow core error",
+				"Failed to get path to executable!");
+		}
+#endif
+		return exePath;
+	}
 
     const vector<string>& KalaDatabaseCore::GetActivityLogs(u32 callerID)
     {

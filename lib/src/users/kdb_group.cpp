@@ -21,8 +21,8 @@ static bool isVerboseLoggingEnabled{};
 
 static constexpr u32 EVERYONE_GROUP_PERSISTENT_ID = 2;
 
-static constexpr u8 MAX_GROUP_PERMISSIONS_RANGE = 15;
-static constexpr u8 MAX_USER_PERMISSIONS_RANGE = 31;
+static constexpr u8 MAX_GROUP_PERMISSIONS_RANGE = 31;
+static constexpr u8 MAX_USER_PERMISSIONS_RANGE = 127;
 static constexpr u8 MAX_TABLE_PERMISSIONS_RANGE = 127;
 
 static string GetUserAndGroup(

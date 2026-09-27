@@ -16,6 +16,18 @@
 #include <algorithm>
 #include <type_traits>
 
+namespace KalaDatabase::Users
+{
+	class Group;
+	class User;
+}
+
+namespace KalaDatabase::Data
+{
+	class Table;
+	class Field;
+}
+
 namespace KalaDatabase::Core
 {
 	using std::unordered_map;
@@ -39,8 +51,11 @@ namespace KalaDatabase::Core
 		requires is_class_v<T>
 	struct LIB_API KalaDatabaseRegistry
 	{
-	friend class AudioListener;
-	friend class AudioPlayer;
+	friend class Database;
+	friend class KalaDatabase::Users::Group;
+	friend class KalaDatabase::Users::User;
+	friend class KalaDatabase::Data::Table;
+	friend class KalaDatabase::Data::Field;
 	public:
 		//Get a runtime iteration safe list of all
 		//created object pointers of this registry

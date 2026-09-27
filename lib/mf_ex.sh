@@ -19,7 +19,7 @@ case "$1" in
     --windows-gnu)
         OUT_NAME=KalaDatabase-Windows-Gnu
 
-        LIB_NAME=kalaaudio-gnu
+        LIB_NAME=kaladatabase-gnu
         LIB_EXT=lib
         LIB_ORIGIN=build/release-windows-gnu
         ;;
@@ -39,11 +39,11 @@ esac
 OUT_VER=pr-1
 OUT_DIR=out/${OUT_NAME}-${OUT_VER}
 
-README=../README.md
-LICENSE=../LICENSE.md
+README=README.md
+LICENSE=LICENSE.md
 CHANGES=CHANGES.md
 INCLUDE=include
-DOCS=../docs
+DOCS=docs
 
 DIR_ES=../../external-shared
 IN_KH=${DIR_ES}/KalaHeaders
@@ -60,11 +60,11 @@ mkdir "${OUT_DIR}"
 mkdir "${OUT_DIR}/${OUT_KH_NAME}"
 
 # The base files
-mf --f "${README}" --t "${OUT_DIR}/${README}"
-mf --f "${LICENSE}" --t "${OUT_DIR}/${LICENSE}"
+mf --f "../${README}" --t "${OUT_DIR}/${README}"
+mf --f "../${LICENSE}" --t "${OUT_DIR}/${LICENSE}"
 mf --f "${CHANGES}" --t "${OUT_DIR}/${CHANGES}"
 mf --f "${INCLUDE}" --t "${OUT_DIR}"
-mf --f "${DOCS}" --t "${OUT_DIR}"
+mf --f "../${DOCS}" --t "${OUT_DIR}"
 
 # The binary
 if [ ! -f "${LIB_ORIGIN}/${LIB_NAME}.${LIB_EXT}" ]; then

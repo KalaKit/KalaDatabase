@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <filesystem>
 
 #include "core_utils.hpp"
 #include "log_utils.hpp"
@@ -30,6 +31,7 @@ namespace KalaDatabase::Core
     using std::string_view;
     using std::vector;
     using std::function;
+    using std::filesystem::path;
 
     using KalaHeaders::KalaLog::LogType;
 
@@ -46,6 +48,9 @@ namespace KalaDatabase::Core
 
         static u32 GetGlobalID();
 		static void SetGlobalID(u32 newID);
+
+		KNODISCARD
+		static path GetExePath();
 
         //Returns all activity logs for this user, cannot be read by anyone except root
         KNODISCARD
@@ -68,7 +73,7 @@ namespace KalaDatabase::Core
             string_view message,
             string_view target,
             LogType logType,
-            bool printToConsole = false,
+            bool printToConsole = true,
             bool printToActivityLogs = true);
     };
 }
