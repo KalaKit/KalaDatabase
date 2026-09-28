@@ -31,16 +31,16 @@ case "$1" in
 esac
 
 TARGET_NAME=KalaDatabase
-LIB_DEST=../../external-shared/${TARGET_NAME}
+LIB_DEST=../external-shared/${TARGET_NAME}
 
 #
 # Core stuff
 #
 
-mf --o --f ../README.md --t "${LIB_DEST}/README.md"
-mf --o --f ../LICENSE.md --t "${LIB_DEST}/LICENSE.md"
+mf --o --f README.md --t "${LIB_DEST}/README.md"
+mf --o --f LICENSE.md --t "${LIB_DEST}/LICENSE.md"
 mf --o --f include --t "${LIB_DEST}"
-mf --o --f ../docs --t "${LIB_DEST}"
+mf --o --f docs --t "${LIB_DEST}"
 
 #
 # Binaries

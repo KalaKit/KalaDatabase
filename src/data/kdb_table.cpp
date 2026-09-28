@@ -4,15 +4,22 @@
 //Read LICENSE.md for more information.
 
 #include "data/kdb_table.hpp"
+#include "data/kdb_field.hpp"
 #include "users/kdb_group.hpp"
 #include "users/kdb_user.hpp"
 #include "core/kdb_core.hpp"
+#include "core/kdb_database.hpp"
 
 using KalaHeaders::KalaLog::LogType;
 
-using KalaDatabase::Users::Group;
-using KalaDatabase::Users::User;
 using KalaDatabase::Core::KalaDatabaseCore;
+using KalaDatabase::Core::UserData;
+using KalaDatabase::Users::USER_ROOT;
+using KalaDatabase::Users::User;
+using KalaDatabase::Users::GroupPermissions;
+using KalaDatabase::Users::UserPermissions;
+using KalaDatabase::Users::TablePermissions;
+using KalaDatabase::Users::Group;
 
 using std::string;
 using std::to_string;
@@ -26,17 +33,14 @@ static string GetUserAndGroup(
     pair<User*, Group*>& outValue)
 {
     User* u{};
-    string err = User::GetRegistry().GetContent(
-        User::GetRegistryIDByPersistentID(callerID), 
-        u);
+    string err = User::GetRegistry().GetContent(User::GetRegistryIDByPersistentID(callerID), u);
     if (!err.empty())
     {
-        return "Failed to " + action + " because caller ID was invalid! Reason: " + err;
+        return "Caller ID was invalid! Reason: " + err;
     }
 
     Group* g{};
-
-    if (callerID != User::GetRootUserPersistentID())
+    if (u->GetUsername() != USER_ROOT)
     {
         err = Group::GetRegistry().GetContent(u->GetGroupID(), g);
         if (!err.empty())

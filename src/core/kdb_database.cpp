@@ -67,7 +67,7 @@ static string GetUserAndGroup(
         if (!err.empty())
         {
             KalaDatabaseCore::ForceClose(
-                "KalaDatabase core error",
+                "KalaDatabase database error",
                 "Failed to " + action + " because caller '" 
                 + to_string(callerID) + "' had an invalid group! Reason: " + err);
         }

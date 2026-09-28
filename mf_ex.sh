@@ -45,7 +45,7 @@ CHANGES=CHANGES.md
 INCLUDE=include
 DOCS=docs
 
-DIR_ES=../../external-shared
+DIR_ES=../external-shared
 IN_KH=${DIR_ES}/KalaHeaders
 OUT_KH_NAME=kalaheaders
 
@@ -60,11 +60,11 @@ mkdir "${OUT_DIR}"
 mkdir "${OUT_DIR}/${OUT_KH_NAME}"
 
 # The base files
-mf --f "../${README}" --t "${OUT_DIR}/${README}"
-mf --f "../${LICENSE}" --t "${OUT_DIR}/${LICENSE}"
+mf --f "${README}" --t "${OUT_DIR}/${README}"
+mf --f "${LICENSE}" --t "${OUT_DIR}/${LICENSE}"
 mf --f "${CHANGES}" --t "${OUT_DIR}/${CHANGES}"
 mf --f "${INCLUDE}" --t "${OUT_DIR}"
-mf --f "../${DOCS}" --t "${OUT_DIR}"
+mf --f "${DOCS}" --t "${OUT_DIR}"
 
 # The binary
 if [ ! -f "${LIB_ORIGIN}/${LIB_NAME}.${LIB_EXT}" ]; then

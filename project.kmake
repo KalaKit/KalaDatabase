@@ -13,7 +13,7 @@ compiler: clang++
 standard: c++20
 binarytype: static
 sources: "src"
-headers: "include", "../../external-shared/KalaHeaders/include"
+headers: "include", "../external-shared/KalaHeaders/include"
 defines: LIB_STATIC
 warninglevel: normal
 customflags: export-compile-commands, export-vscode-sln
