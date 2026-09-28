@@ -12,16 +12,20 @@
 #include <linux/limits.h>
 #endif
 
-#include "users/kdb_user.hpp"
 #include "users/kdb_group.hpp"
+#include "users/kdb_user.hpp"
+#include "data/kdb_table.hpp"
+#include "data/kdb_field.hpp"
 
 using KalaHeaders::KalaLog::Log;
 using KalaHeaders::KalaLog::TimeFormat;
 using KalaHeaders::KalaLog::DateFormat;
 
+using KalaDatabase::Users::Group;
 using KalaDatabase::Users::USER_ROOT;
 using KalaDatabase::Users::User;
-using KalaDatabase::Users::Group;
+using KalaDatabase::Data::Table;
+using KalaDatabase::Data::Field;
 
 using std::string;
 using std::vector;
@@ -33,6 +37,7 @@ static bool isVerboseLoggingEnabled{};
 static path exePath{};
 
 static u32 globalID{};
+static u32 persistentID{};
 
 static vector<string> activityLogs{};
 
@@ -45,6 +50,34 @@ namespace KalaDatabase::Core
 
     u32 KalaDatabaseCore::GetGlobalID() { return globalID; }
 	void KalaDatabaseCore::SetGlobalID(u32 newID) { globalID = newID; }
+
+    u32 KalaDatabaseCore::GetPersistentID() { return persistentID; }
+    void KalaDatabaseCore::SetPersistentID(u32 newValue) { persistentID = newValue; }
+
+    bool KalaDatabaseCore::IsPersistentIDInUse(u32 persistentID)
+    {
+        for (Group* g : Group::GetRegistry().GetAllContent())
+        {
+            if (g->persistentID == persistentID) return true;
+        }
+
+        for (User* u : User::GetRegistry().GetAllContent())
+        {
+            if (u->persistentID == persistentID) return true;
+        }
+
+        for (Table* t : Table::GetRegistry().GetAllContent())
+        {
+            if (t->persistentID == persistentID) return true;
+        }
+
+        for (Field* f : Field::GetRegistry().GetAllContent())
+        {
+            if (f->persistentID == persistentID) return true;
+        }
+
+        return false;
+    }
 
 	path KalaDatabaseCore::GetExePath()
 	{
@@ -132,7 +165,7 @@ namespace KalaDatabase::Core
 
         LogPrint(
             "User '" + u->username + "' with ID '" + to_string(callerID) 
-            + "' in group '" + g->groupName + "' attempted to access activity logs!",
+            + "' in group '" + g->groupName + "' requested to access activity logs!",
             "KDB_CORE",
             LogType::LOG_WARNING);
 

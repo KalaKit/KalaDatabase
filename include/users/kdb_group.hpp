@@ -32,8 +32,8 @@ namespace KalaDatabase::Users
     //Has no group, user or table permissions, its permissions cannot be modified
     static constexpr string_view GROUP_EVERYONE = "Everyone";
 
-    static constexpr u8 MAX_GROUP_NAME_LENGTH = 16;
-    static constexpr u8 MIN_GROUP_NAME_LENGTH = 4;
+    static constexpr u8 MIN_GROUP_NAME_SIZE = 4;
+    static constexpr u8 MAX_GROUP_NAME_SIZE = 16;
 
     //Root has full permission over all groups,
     //root has no group of its own so it cannot modify its group permissions,

@@ -27,6 +27,9 @@ namespace KalaDatabase::Data
 
     using KalaDatabase::Core::KalaDatabaseRegistry;
 
+    static constexpr u8 MIN_TABLE_NAME_SIZE = 4;
+    static constexpr u8 MAX_TABLE_NAME_SIZE = 16;
+
     class LIB_API Table
     {
     friend class KalaDatabase::Core::KalaDatabaseCore;

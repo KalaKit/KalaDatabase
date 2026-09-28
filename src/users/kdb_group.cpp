@@ -3,6 +3,8 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
+#include <memory>
+
 #include "users/kdb_group.hpp"
 #include "users/kdb_user.hpp"
 #include "core/kdb_core.hpp"
@@ -11,6 +13,7 @@
 using KalaHeaders::KalaLog::LogType;
 
 using KalaDatabase::Core::KalaDatabaseCore;
+using KalaDatabase::Core::Database;
 using KalaDatabase::Core::UserData;
 using KalaDatabase::Users::USER_ROOT;
 using KalaDatabase::Users::User;
@@ -22,6 +25,8 @@ using KalaDatabase::Users::Group;
 using std::string;
 using std::to_string;
 using std::pair;
+using std::unique_ptr;
+using std::make_unique;
 
 static bool isVerboseLoggingEnabled{};
 
@@ -72,28 +77,48 @@ namespace KalaDatabase::Users
 
     u32 Group::GetRegistryIDByPersistentID(u32 persistentID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
+                "KDB_GROUP",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Group* g : registry.GetAllContent())
         {
             if (g->persistentID == persistentID) return g->ID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get registry ID for group '" 
+            "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
-            "KDB_GROUP",
+            "KDB_USER",
             LogType::LOG_WARNING);
 
         return 0;
     }
     u32 Group::GetPersistentIDByRegistryID(u32 registryID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
+                "KDB_GROUP",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Group* g : registry.GetAllContent())
         {
             if (g->ID == registryID) return g->persistentID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get persistent ID for group '" 
+            "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_GROUP",
             LogType::LOG_WARNING);
@@ -115,7 +140,50 @@ namespace KalaDatabase::Users
         u8 userPermissions,
         u8 tablePermissions)
     {
-        
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to initialize group because KalaDatabase has not been initialized!",
+                "KDB_GROUP",
+                LogType::LOG_WARNING);
+
+            return nullptr;
+        }
+
+        u32 newID = KalaDatabaseCore::GetGlobalID() + 1;
+		KalaDatabaseCore::SetGlobalID(newID);
+
+		unique_ptr<Group> newGroup = make_unique<Group>();
+		Group* groupPtr = newGroup.get();
+
+        groupPtr->ID = newID;
+        groupPtr->persistentID = persistentID;
+
+        groupPtr->groupName = groupName;
+
+        groupPtr->groupPermissions = groupPermissions;
+        groupPtr->userPermissions = userPermissions;
+        groupPtr->tablePermissions = tablePermissions;
+
+		string err = registry.AddContent(
+			newID, 
+			std::move(newGroup));
+		if (!err.empty())
+		{
+			KalaDatabaseCore::ForceClose(
+				"KalaDatabase group error",
+				"Failed to initialize group '" + string(groupName) + "'! Reason: " + err);
+		}
+
+        if (isVerboseLoggingEnabled)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Initialized group '" + string(groupName) + "' via caller ID '" + to_string(callerID) + "'!",
+                "KDB_GROUP",
+                LogType::LOG_VERBOSE);
+        }
+
+        return groupPtr;
     }
 
     u32 Group::GetID() const { return ID; }
@@ -142,6 +210,12 @@ namespace KalaDatabase::Users
 
     }
 
+    bool Group::HasGroupPermission(
+        u32 callerID,
+        GroupPermissions permission)
+    {
+        
+    }
     u8 Group::GetGroupPermissions(u32 callerID) const { return groupPermissions; }
     void Group::SetGroupPermissions(
         u32 callerID,
@@ -150,6 +224,12 @@ namespace KalaDatabase::Users
 
     }
 
+    bool Group::HasUserPermission(
+        u32 callerID,
+        UserPermissions permission)
+    {
+        
+    }
     u8 Group::GetUserPermissions(u32 callerID) const { return userPermissions; }
     void Group::SetUserPermissions(
         u32 callerID,
@@ -158,6 +238,12 @@ namespace KalaDatabase::Users
         
     }
 
+    bool Group::HasTablePermission(
+        u32 callerID,
+        TablePermissions permission)
+    {
+
+    }
     u8 Group::GetTablePermissions(u32 callerID) const { return tablePermissions; }
     void Group::SetTablePermissions(
         u32 callerID,

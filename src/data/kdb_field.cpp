@@ -13,13 +13,14 @@
 using KalaHeaders::KalaLog::LogType;
 
 using KalaDatabase::Core::KalaDatabaseCore;
+using KalaDatabase::Core::Database;
 using KalaDatabase::Core::UserData;
-using KalaDatabase::Users::USER_ROOT;
-using KalaDatabase::Users::User;
 using KalaDatabase::Users::GroupPermissions;
 using KalaDatabase::Users::UserPermissions;
 using KalaDatabase::Users::TablePermissions;
 using KalaDatabase::Users::Group;
+using KalaDatabase::Users::USER_ROOT;
+using KalaDatabase::Users::User;
 
 using std::string;
 using std::to_string;
@@ -68,13 +69,23 @@ namespace KalaDatabase::Data
 
     u32 Field::GetRegistryIDByPersistentID(u32 persistentID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
+                "KDB_FIELD",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Field* f : registry.GetAllContent())
         {
             if (f->persistentID == persistentID) return f->ID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get registry ID for field '" 
+            "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
             "KDB_FIELD",
             LogType::LOG_WARNING);
@@ -83,13 +94,23 @@ namespace KalaDatabase::Data
     }
     u32 Field::GetPersistentIDByRegistryID(u32 registryID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
+                "KDB_FIELD",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Field* f : registry.GetAllContent())
         {
             if (f->ID == registryID) return f->persistentID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get persistent ID for field '" 
+            "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_FIELD",
             LogType::LOG_WARNING);
@@ -100,11 +121,19 @@ namespace KalaDatabase::Data
     Field* Field::Initialize(
         u32 callerID,
         u32 persistentID,
+        u32 tableID,
         string_view fieldName,
-        string_view fieldValue,
-        u32 tableID)
+        string_view fieldValue)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to initialize field because KalaDatabase has not been initialized!",
+                "KDB_FIELD",
+                LogType::LOG_WARNING);
 
+            return nullptr;
+        }
     }
 
     u32 Field::GetID() const { return ID; }

@@ -25,6 +25,9 @@ namespace KalaDatabase::Data
 
     using KalaDatabase::Core::KalaDatabaseRegistry;
 
+    static constexpr u8 MIN_FIELD_NAME_SIZE = 4;
+    static constexpr u8 MAX_FIELD_NAME_SIZE = 16;
+
     enum class FieldEditType : u8
     {
         //Owning user can read and write to this field
@@ -72,9 +75,9 @@ namespace KalaDatabase::Data
 		static Field* Initialize(
             u32 callerID,
             u32 persistentID,
+            u32 tableID,
             string_view fieldName,
-            string_view fieldValue,
-            u32 tableID);
+            string_view fieldValue);
 
         u32 GetID() const;
 

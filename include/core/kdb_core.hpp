@@ -49,6 +49,12 @@ namespace KalaDatabase::Core
         static u32 GetGlobalID();
 		static void SetGlobalID(u32 newID);
 
+        //Returns the current highest persistent ID
+        static u32 GetPersistentID();
+        static void SetPersistentID(u32 newValue);
+
+        static bool IsPersistentIDInUse(u32 persistentID);
+
 		KNODISCARD
 		static path GetExePath();
 

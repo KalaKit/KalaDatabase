@@ -13,13 +13,14 @@
 using KalaHeaders::KalaLog::LogType;
 
 using KalaDatabase::Core::KalaDatabaseCore;
+using KalaDatabase::Core::Database;
 using KalaDatabase::Core::UserData;
-using KalaDatabase::Users::USER_ROOT;
-using KalaDatabase::Users::User;
 using KalaDatabase::Users::GroupPermissions;
 using KalaDatabase::Users::UserPermissions;
 using KalaDatabase::Users::TablePermissions;
 using KalaDatabase::Users::Group;
+using KalaDatabase::Users::USER_ROOT;
+using KalaDatabase::Users::User;
 
 using std::string;
 using std::to_string;
@@ -68,13 +69,23 @@ namespace KalaDatabase::Data
 
     u32 Table::GetRegistryIDByPersistentID(u32 persistentID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
+                "KDB_TABLE",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Table* t : registry.GetAllContent())
         {
             if (t->persistentID == persistentID) return t->ID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get registry ID for table '" 
+            "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
             "KDB_TABLE",
             LogType::LOG_WARNING);
@@ -83,13 +94,23 @@ namespace KalaDatabase::Data
     }
     u32 Table::GetPersistentIDByRegistryID(u32 registryID)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
+                "KDB_TABLE",
+                LogType::LOG_WARNING);
+
+            return 0;
+        }
+
         for (Table* t : registry.GetAllContent())
         {
             if (t->ID == registryID) return t->persistentID;
         }
 
         KalaDatabaseCore::LogPrint(
-            "Failed to get persistent ID for table '" 
+            "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_TABLE",
             LogType::LOG_WARNING);
@@ -102,7 +123,15 @@ namespace KalaDatabase::Data
         u32 persistentID,
         string_view tableName)
     {
+        if (!Database::IsInitialized())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to initialize table because KalaDatabase has not been initialized!",
+                "KDB_TABLE",
+                LogType::LOG_WARNING);
 
+            return nullptr;
+        }
     }
 
     u32 Table::GetID() const { return ID; }

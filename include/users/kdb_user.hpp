@@ -7,8 +7,10 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 #include "core_utils.hpp"
+#include "password_hasher.hpp"
 
 #include "core/kdb_registry.hpp"
 
@@ -20,21 +22,31 @@ namespace KalaDatabase::Core
 
 namespace KalaDatabase::Users
 {
+    using KalaHeaders::KalaPasswordHasher::HASH_SIZE_BYTES;
+    using KalaHeaders::KalaPasswordHasher::SALT_SIZE_BYTES;
+
+    using KalaDatabase::Core::KalaDatabaseRegistry;
+
     using std::string;
     using std::string_view;
     using std::pair;
     using std::vector;
+    using std::array;
     using std::default_delete;
-
-    using KalaDatabase::Core::KalaDatabaseRegistry;
 
     //Can modify all groups, users, tables and fields, can only read its own user data,
     //cannot be given a group, does not have a group that can be modified,
     //cannot be deleted from users registry
     static constexpr string_view USER_ROOT = "root";
 
-    static constexpr u8 MAX_USER_PASS_LENGTH = 32;
-    static constexpr u8 MIN_USER_PASS_LENGTH = 8;
+    static constexpr u8 MIN_USER_PASS_SIZE = 8;
+    static constexpr u8 MAX_USER_PASS_SIZE = 32;
+
+    struct LIB_API PasswordData
+    {
+        array<u8, HASH_SIZE_BYTES> hashedPasswordBytes{};
+        array<u8, HASH_SIZE_BYTES> passwordSaltBytes{};
+    };
 
     class LIB_API User
     {
@@ -59,7 +71,9 @@ namespace KalaDatabase::Users
 
         //Create a new user and assign to selected group,
         //leave persistent ID as 0 if you want it to be auto-assigned,
-        //each persistent ID must be unique, they cannot be shared across groups, users, tables and fields
+        //each persistent ID must be unique, they cannot be shared across groups, users, tables and fields,
+        //if no users exist then root user is automatically created first,
+        //persistent ID 1 and username root are reserved only for root user
         KNODISCARD
 		static User* Initialize(
             u32 callerID,
@@ -113,14 +127,15 @@ namespace KalaDatabase::Users
     private:
         ~User();
 
+        static void SetRootInitState(bool value);
+        static bool RootHasPassword();
+
         u32 ID{};
         u32 persistentID{};
         u32 groupID{};
         vector<u32> ownedTableIDs{}; //which tables does this user own
 
         string username{};
-        pair<string, string> hashedPassword{};
-
-        vector<string> activityLogs{};
+        pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>> hashedPassword{};
     };
 }

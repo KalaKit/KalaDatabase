@@ -7,30 +7,58 @@
 
 #include <string_view>
 #include <vector>
+#include <array>
 #include <filesystem>
 
 #include "core_utils.hpp"
+#include "password_hasher.hpp"
+
+namespace KalaDatabase::Users
+{
+    class Group;
+    class User;
+}
+
+namespace KalaDatabase::Data
+{
+    class Table;
+    class Field;
+}
 
 namespace KalaDatabase::Core
 {
+    using KalaHeaders::KalaPasswordHasher::HASH_SIZE_BYTES;
+    using KalaHeaders::KalaPasswordHasher::SALT_SIZE_BYTES;
+
     using std::string;
     using std::string_view;
     using std::vector;
+    using std::array;
     using std::filesystem::path;
 
     struct LIB_API UserData
     {
         string username{};
         
-        string hashedPassword{};
-        string hashSalt{};
+        array<u8, HASH_SIZE_BYTES> hashedPassword{};
+        array<u8, SALT_SIZE_BYTES> passwordSalt{};
     };
 
     class LIB_API Database
     {
+    friend class KalaDatabase::Users::Group;
+    friend class KalaDatabase::Users::User;
+    friend class KalaDatabase::Data::Table;
+    friend class KalaDatabase::Data::Field;
     public:
         static bool IsVerboseLoggingEnabled();
         static void SetVerboseLoggingState(bool newValue);
+
+        static bool IsInitialized();
+        //Creates the root user, the 'Everyone' group and allows to load user list and database,
+        //loading the user list overrides the created root user password,
+        //or if no user list exists then you must set root password manually before you can save the user list
+        static void Initialize();
 
         static const path& GetLoadedUserListPath();
 
@@ -52,8 +80,7 @@ namespace KalaDatabase::Core
         //Loads the on-disk user list from a '.txt' file to memory,
         //accepts absolute path and path relative to executable,
         //set relativeToExe to true if you want this file to be loaded relative to the exe dir,
-        //can only be called by root, logs off all logged in users except root,
-        //can be called with caller ID 0 if root has not yet logged in
+        //can only be called by root, logs off all logged in users except root
         static void LoadUserList(
             u32 callerID,
             const path& userListPath,
@@ -106,5 +133,10 @@ namespace KalaDatabase::Core
         static void Logout(
             u32 callerID,
             string_view username);
+
+        //Unloads database and user list, clears all tables, fields, users and groups
+        static void Shutdown();
+    private:
+        static const vector<u32>& GetLoggedInUsers();
     };
 }

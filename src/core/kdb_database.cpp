@@ -3,18 +3,22 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
-#include "password_hasher.hpp"
 #include "file_utils.hpp"
 #include "string_utils.hpp"
 
 #include "core/kdb_database.hpp"
-#include "users/kdb_user.hpp"
 #include "users/kdb_group.hpp"
+#include "users/kdb_user.hpp"
+#include "data/kdb_table.hpp"
+#include "data/kdb_field.hpp"
 
 using KalaHeaders::KalaCore::ContainsValue;
 using KalaHeaders::KalaCore::HasDuplicates;
 
+using KalaHeaders::KalaPasswordHasher::HashPassword;
 using KalaHeaders::KalaPasswordHasher::VerifyPassword;
+using KalaHeaders::KalaPasswordHasher::StringToBytes;
+using KalaHeaders::KalaPasswordHasher::BytesToString;
 
 using KalaHeaders::KalaFile::WriteLinesToFile;
 using KalaHeaders::KalaFile::ReadLinesFromFile;
@@ -24,12 +28,14 @@ using KalaHeaders::KalaString::SplitString;
 
 using KalaDatabase::Core::KalaDatabaseCore;
 using KalaDatabase::Core::UserData;
-using KalaDatabase::Users::USER_ROOT;
-using KalaDatabase::Users::User;
 using KalaDatabase::Users::GroupPermissions;
 using KalaDatabase::Users::UserPermissions;
 using KalaDatabase::Users::TablePermissions;
 using KalaDatabase::Users::Group;
+using KalaDatabase::Users::USER_ROOT;
+using KalaDatabase::Users::User;
+using KalaDatabase::Data::Table;
+using KalaDatabase::Data::Field;
 
 using std::string;
 using std::string_view;
@@ -39,6 +45,7 @@ using std::pair;
 using std::filesystem::path;
 
 static bool isVerboseLoggingEnabled{};
+static bool isInitialized{};
 
 static path loadedUserListPath{};
 static path loadedDatabasePath{};
@@ -83,11 +90,70 @@ namespace KalaDatabase::Core
     bool Database::IsVerboseLoggingEnabled() { return isVerboseLoggingEnabled; }
     void Database::SetVerboseLoggingState(bool newValue) { isVerboseLoggingEnabled = newValue; }
 
+    bool Database::IsInitialized() { return isInitialized; }
+    void Database::Initialize()
+    {
+        if (isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to initialize because KalaDatabase is already initialized!",
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
+
+        isInitialized = true;
+
+        User::SetRootInitState(true);
+
+        User* root = User::Initialize(
+            0,
+            1,
+            0,
+            USER_ROOT,
+            "");
+        if (!root)
+        {
+            KalaDatabaseCore::ForceClose(
+                "KalaDatabase database error",
+                "Failed to initialize root user!");
+        }
+
+        User::SetRootInitState(false);
+
+        Group* everyone = Group::Initialize(
+            0,
+            2,
+            "Everyone");
+        if (!everyone)
+        {
+            KalaDatabaseCore::ForceClose(
+                "KalaDatabase database error",
+                "Failed to initialize group 'Everyone'!");
+        }
+
+        KalaDatabaseCore::LogPrint(
+            "Finished initializing KalaDatabase!",
+            "KDB_DATABASE",
+            LogType::LOG_SUCCESS);
+    }
+
     const path& Database::GetLoadedUserListPath() { return loadedUserListPath; }
 
     const vector<UserData>& Database::GetUserList(u32 callerID)
     {
         static const vector<UserData> empty{};
+
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get user list because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
 
         pair<User*, Group*> userData{};
 
@@ -137,6 +203,16 @@ namespace KalaDatabase::Core
         bool relativeToExe,
         bool override)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to save user list because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
+
         if (allUsers.empty())
         {
             KalaDatabaseCore::LogPrint(
@@ -197,7 +273,18 @@ namespace KalaDatabase::Core
 
         for (const UserData& ud : allUsers)
         {
-            saveData.push_back(ud.username + " " + ud.hashedPassword + " " + ud.hashSalt);
+            string hashPasswordString{};
+            string passwordSaltString{};
+
+            BytesToString(
+                ud.hashedPassword,
+                hashPasswordString);
+
+            BytesToString(
+                ud.passwordSalt,
+                passwordSaltString);
+
+            saveData.push_back(ud.username + " " + hashPasswordString + " " + passwordSaltString);
         }
 
         err = WriteLinesToFile(
@@ -227,48 +314,54 @@ namespace KalaDatabase::Core
         const path& userListPath,
         bool relativeToExe)
     {
-        pair<User*, Group*> userData{};
-
-        if (callerID == 0
-            && !loggedInUsers.empty())
+        if (!isInitialized)
         {
             KalaDatabaseCore::LogPrint(
-                "Failed to load user list because caller ID was set to 0 but root is already logged in!", 
+                "Failed to load user list because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
                 LogType::LOG_WARNING);
 
             return;
         }
 
-        if (callerID != 0)
+        if (callerID == 0)
         {
-            string err = GetUserAndGroup(
-                callerID,
-                "load user list",
-                userData);
-            if (!err.empty())
-            {
-                KalaDatabaseCore::LogPrint(
-                    "Failed to load user list! Reason: " + err, 
-                    "KDB_DATABASE",
-                    LogType::LOG_WARNING);
+            KalaDatabaseCore::LogPrint(
+                "Failed to load user list because caller ID was empty!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
 
-                return;
-            }
+            return;
+        }
 
-            bool isRoot = userData.first->username == USER_ROOT;
+        pair<User*, Group*> userData{};
 
-            if (!isRoot)
-            {
-                KalaDatabaseCore::LogPrint(
-                    "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                    + "' in group '" + userData.second->groupName + "' and insufficient 'root' permission "
-                    "requested to load the user list!",
-                    "KDB_DATABASE",
-                    LogType::LOG_WARNING);
+        string err = GetUserAndGroup(
+            callerID,
+            "load user list",
+            userData);
+        if (!err.empty())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to load user list! Reason: " + err, 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
 
-                return;
-            }
+            return;
+        }
+
+        bool isRoot = userData.first->username == USER_ROOT;
+
+        if (!isRoot)
+        {
+            KalaDatabaseCore::LogPrint(
+                "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
+                + "' in group '" + userData.second->groupName + "' and insufficient 'root' permission "
+                "requested to load the user list!",
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
         }
 
         if (!relativeToExe
@@ -289,7 +382,7 @@ namespace KalaDatabase::Core
 
         vector<string> loadData{};
 
-        string err = ReadLinesFromFile(
+        err = ReadLinesFromFile(
             targetPath,
             loadData);
 
@@ -343,29 +436,18 @@ namespace KalaDatabase::Core
                     {
                         KalaDatabaseCore::LogPrint(
                             "Failed to load user list from path '" + userListPath.string() + "' "
-                            "because line '" + to_string(i) + "' was malformed! Reason: " + err,
+                            "because line '" + to_string(i) + "' string splitting failed! Reason: " + err,
                             "KDB_DATABASE",
                             LogType::LOG_WARNING);
 
                         return false;
                     }
 
-                    if (splitString.size() < 3)
+                    if (splitString.size() != 3)
                     {
                         KalaDatabaseCore::LogPrint(
                             "Failed to load user list from path '" + userListPath.string() + "' "
-                            "because line '" + to_string(i) + "' has too few spaces!",
-                            "KDB_DATABASE",
-                            LogType::LOG_WARNING);
-
-                        return false;
-                    }
-
-                    if (splitString.size() > 3)
-                    {
-                        KalaDatabaseCore::LogPrint(
-                            "Failed to load user list from path '" + userListPath.string() + "' "
-                            "because line '" + to_string(i) + "' has too many spaces!",
+                            "because line '" + to_string(i) + "' has invalid spacing!",
                             "KDB_DATABASE",
                             LogType::LOG_WARNING);
 
@@ -374,11 +456,44 @@ namespace KalaDatabase::Core
 
                     userDuplicateCheck.push_back(splitString[0]);
 
+                    array<u8, HASH_SIZE_BYTES> hashedPasswordBytes{};
+                    array<u8, SALT_SIZE_BYTES> passwordSaltBytes{};
+
+                    string hashedPasswordError = StringToBytes(
+                        splitString[1],
+                        hashedPasswordBytes);
+
+                    if (!hashedPasswordError.empty())
+                    {
+                        KalaDatabaseCore::LogPrint(
+                            "Failed to load user list from path '" + userListPath.string() + "' "
+                            "because line '" + to_string(i) + "' hashed password was malformed! Reason: " + hashedPasswordError,
+                            "KDB_DATABASE",
+                            LogType::LOG_WARNING);
+
+                        return false;
+                    }
+
+                    string passwordSaltError = StringToBytes(
+                        splitString[2],
+                        passwordSaltBytes);
+
+                    if (!passwordSaltError.empty())
+                    {
+                        KalaDatabaseCore::LogPrint(
+                            "Failed to load user list from path '" + userListPath.string() + "' "
+                            "because line '" + to_string(i) + "' password salt was malformed! Reason: " + passwordSaltError,
+                            "KDB_DATABASE",
+                            LogType::LOG_WARNING);
+
+                        return false;
+                    }
+
                     verifiedData.push_back(
                     {
                         .username = splitString[0],
-                        .hashedPassword = splitString[1],
-                        .hashSalt = splitString[2] 
+                        .hashedPassword = hashedPasswordBytes,
+                        .passwordSalt = passwordSaltBytes
                     });
                 }
 
@@ -457,21 +572,58 @@ namespace KalaDatabase::Core
         bool relativeToExe,
         bool override)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to save database because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
 
+            return;
+        }
     }
-
     void Database::LoadDatabase(
         u32 callerID,
         const path& databasePath,
         bool relativeToExe)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to load database because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
 
+            return;
+        }
+    }
+    void Database::UnloadDatabase(u32 callerID)
+    {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to unload database because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
     }
 
     bool Database::IsUserLoggedIn(
         u32 callerID,
         string_view username)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get user logged in state because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return false;
+        }
+
         if (loggedInUsers.empty())
         {
             KalaDatabaseCore::LogPrint(
@@ -544,6 +696,16 @@ namespace KalaDatabase::Core
         string_view username,
         string_view password)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to log in user because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
+
         if (username.empty())
         {
             KalaDatabaseCore::LogPrint(
@@ -599,7 +761,7 @@ namespace KalaDatabase::Core
 
         string err = VerifyPassword(
             password, 
-            { userData->hashedPassword, userData->hashSalt });
+            { userData->hashedPassword, userData->passwordSalt });
 
         if (!err.empty())
         {
@@ -675,6 +837,16 @@ namespace KalaDatabase::Core
         u32 callerID,
         string_view username)
     {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to log out user because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
+
         if (username.empty())
         {
             KalaDatabaseCore::LogPrint(
@@ -842,4 +1014,28 @@ namespace KalaDatabase::Core
                 LogType::LOG_VERBOSE);
         }
     }
+
+    void Database::Shutdown()
+    {
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to shut down because KalaDatabase has not been initialized!",
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return;
+        }
+
+        Database::UnloadDatabase(User::GetRootUserPersistentID());
+
+        isInitialized = false;
+
+        KalaDatabaseCore::LogPrint(
+            "Finished KalaDatabase shutdown!",
+            "KDB_DATABASE",
+            LogType::LOG_SUCCESS);
+    }
+
+    const vector<u32>& Database::GetLoggedInUsers() { return loggedInUsers; }
 }
