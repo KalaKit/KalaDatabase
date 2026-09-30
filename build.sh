@@ -121,6 +121,7 @@ if [ ! -d "${TARGET_REL_DIR}" ]; then
 fi
 
 mf --o --f "${TEMP_REL_DIR}/${BIN_REL}" --t "${TARGET_REL_DIR}/${BIN_REL}"
+mf --o --f "include" --t "${TARGET_REL_DIR}"
 
 mf --o --f "README.md" --t "${TARGET_REL_DIR}/README.md"
 mf --o --f "LICENSE.md" --t "${TARGET_REL_DIR}/LICENSE.md"
@@ -145,6 +146,7 @@ else
     mkdir "${TARGET_DEB_DIR}"
 
     mf --o --f "${TEMP_DEB_DIR}/${BIN_DEB}" --t "${TARGET_DEB_DIR}/${BIN_DEB}"
+    mf --o --f "include" --t "${TARGET_DEB_DIR}"
 
     mf --o --f "README.md" --t "${TARGET_DEB_DIR}/README.md"
     mf --o --f "LICENSE.md" --t "${TARGET_DEB_DIR}/LICENSE.md"
