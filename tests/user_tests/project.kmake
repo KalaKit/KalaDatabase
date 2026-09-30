@@ -4,11 +4,11 @@
 
 #references
 name_bin: kaladatabase
-dir_release: build/release-
-dir_debug: build/debug-
+dir_release: build/temp/release-
+dir_debug: build/temp/debug-
 name_kd: kaladatabase
-dir_kd_rel: ../../../external-shared/KalaDatabase/release
-dir_kd_deb: ../../../external-shared/KalaDatabase/debug
+dir_kd_rel: ../../build/0-0-1/release-
+dir_kd_deb: ../../build/0-0-1/debug-
 comm_objcopy: objcopy --remove-section .note.gnu.property
 links_win_only: msvcrt, msvcprt, ucrt, vcruntime, shell32, user32
 links_win_on_linux_only: winpthread
@@ -24,7 +24,7 @@ standard: c++20
 binarytype: executable
 binaryname: ${name_bin}
 sources: "src"
-headers: "../../../external-shared/KalaHeaders/include", "../../../external-shared/KalaDatabase/include"
+headers: "../../include", "../../external/kalaheaders/include"
 defines: LIB_STATIC
 warninglevel: normal
 customflags: export-compile-commands, export-vscode-sln
@@ -32,18 +32,18 @@ customflags: export-compile-commands, export-vscode-sln
 #profile debug-windows
 buildtype: debug
 buildpath: "${dir_debug}windows"
-links: "${dir_kd_deb}/${name_kd}d.lib", ${links_win_only}
+links: "${dir_kd_deb}windows/${name_kd}d.lib", ${links_win_only}
 
 #profile release-windows
 buildtype: minsizerel
 buildpath: "${dir_release}windows"
-links: "${dir_kd_rel}/${name_kd}.lib", ${links_win_only}
+links: "${dir_kd_rel}windows/${name_kd}.lib", ${links_win_only}
 
 #profile debug-windows-gnu
 targettype: windows-gnu
 buildtype: debug
 buildpath: "${dir_debug}windows-gnu"
-links: "${dir_kd_deb}/${name_kd}-gnud.lib", ${links_win_on_linux_only}
+links: "${dir_kd_deb}windows-gnu/${name_kd}-gnud.lib", ${links_win_on_linux_only}
 postbuildaction: cp "${lib_libgcc}" "${dir_debug}windows-gnu"
 postbuildaction: cp "${lib_libstdcpp}" "${dir_debug}windows-gnu"
 postbuildaction: cp "${lib_libwinp}" "${dir_debug}windows-gnu"
@@ -52,7 +52,7 @@ postbuildaction: cp "${lib_libwinp}" "${dir_debug}windows-gnu"
 targettype: windows-gnu
 buildtype: minsizerel
 buildpath: "${dir_release}windows-gnu"
-links: "${dir_kd_rel}/${name_kd}-gnu.lib", ${links_win_on_linux_only}
+links: "${dir_kd_rel}windows-gnu/${name_kd}-gnu.lib", ${links_win_on_linux_only}
 postbuildaction: cp "${lib_libgcc}" "${dir_release}windows-gnu"
 postbuildaction: cp "${lib_libstdcpp}" "${dir_release}windows-gnu"
 postbuildaction: cp "${lib_libwinp}" "${dir_release}windows-gnu"
@@ -60,14 +60,14 @@ postbuildaction: cp "${lib_libwinp}" "${dir_release}windows-gnu"
 #profile debug-linux
 buildtype: debug
 buildpath: "${dir_debug}linux"
-links: "${dir_kd_deb}/lib${name_kd}d.a"
+links: "${dir_kd_deb}linux/lib${name_kd}d.a"
 //strips stupid avx requirements that cachyos seems to add for no reason
 postbuildaction: ${comm_objcopy} ${dir_debug}linux/${name_bin}
 
 #profile release-linux
 buildtype: minsizerel
 buildpath: "${dir_release}linux"
-links: "${dir_kd_rel}/lib${name_kd}.a"
+links: "${dir_kd_rel}linux/lib${name_kd}.a"
 //strips stupid avx requirements that cachyos seems to add for no reason
 postbuildaction: ${comm_objcopy} ${dir_release}linux/${name_bin}
 postbuildaction: strip --strip-unneeded ${dir_release}linux/${name_bin}

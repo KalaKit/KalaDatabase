@@ -4,8 +4,8 @@
 
 #references
 name_bin: kaladatabase
-dir_release: build/release-
-dir_debug: build/debug-
+dir_release: build/temp/release-
+dir_debug: build/temp/debug-
 
 #global
 compilerlauncher: ccache
@@ -13,7 +13,7 @@ compiler: clang++
 standard: c++20
 binarytype: static
 sources: "src"
-headers: "include", "../external-shared/KalaHeaders/include"
+headers: "include", "external/kalaheaders/include"
 defines: LIB_STATIC
 warninglevel: normal
 customflags: export-compile-commands, export-vscode-sln
