@@ -25,6 +25,4 @@ This project relies on several [external dependencies](external), this repositor
 
 [How to build from source](docs/build_from_source.md)
 
-[External libraries](docs/external_libraries.md)
-
 [Lost Empire Entertainment and KalaKit ecosystem](docs/ecosystem.md)
