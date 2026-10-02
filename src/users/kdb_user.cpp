@@ -354,7 +354,7 @@ namespace KalaDatabase::Users
 
     }
 
-    const pair<string, string>& User::GetPassword(u32 callerID) const
+    const pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>>& User::GetPassword(u32 callerID) const
     {
 
     }

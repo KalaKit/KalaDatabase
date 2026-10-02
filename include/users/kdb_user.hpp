@@ -45,7 +45,7 @@ namespace KalaDatabase::Users
     struct LIB_API PasswordData
     {
         array<u8, HASH_SIZE_BYTES> hashedPasswordBytes{};
-        array<u8, HASH_SIZE_BYTES> passwordSaltBytes{};
+        array<u8, SALT_SIZE_BYTES> passwordSaltBytes{};
     };
 
     class LIB_API User
@@ -109,7 +109,7 @@ namespace KalaDatabase::Users
 
         //Returns hashed password and hash salt
         KNODISCARD
-		const pair<string, string>& GetPassword(u32 callerID) const;
+		const pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>>& GetPassword(u32 callerID) const;
         //Pass real password, gets stored as hashed,
         //must save user list to apply changes on disk
         void SetPassword(
