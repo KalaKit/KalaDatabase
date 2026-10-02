@@ -126,8 +126,6 @@ fi
 
 mf --o --f "${TEMP_REL_DIR}/${BIN_REL}" --t "${TARGET_REL_DIR}/${BIN_REL}"
 
-mf --o --f "../../LICENSE.md" --t "${TARGET_REL_DIR}/LICENSE.md"
-
 mf --o --f "test_files" --t "${TARGET_REL_DIR}"
 
 # Debug
@@ -145,8 +143,6 @@ else
     mkdir "${TARGET_DEB_DIR}"
 
     mf --o --f "${TEMP_DEB_DIR}/${BIN_DEB}" --t "${TARGET_DEB_DIR}/${BIN_DEB}"
-
-    mf --o --f "../../LICENSE.md" --t "${TARGET_DEB_DIR}/LICENSE.md"
 
     mf --o --f "test_files" --t "${TARGET_DEB_DIR}"
 fi
