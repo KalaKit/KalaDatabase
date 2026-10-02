@@ -43,9 +43,6 @@ namespace KalaDatabase::Core
     friend class KalaDatabase::Data::Table;
     friend class KalaDatabase::Data::Field;
     public:
-        static bool IsVerboseLoggingEnabled();
-        static void SetVerboseLoggingState(bool newValue);
-
         static u32 GetGlobalID();
 		static void SetGlobalID(u32 newID);
 

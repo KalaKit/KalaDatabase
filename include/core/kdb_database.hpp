@@ -68,10 +68,10 @@ namespace KalaDatabase::Core
 		static const vector<UserData>& GetUserList(u32 callerID);
         //Saves the current in-memory user list as a '.txt' file to the target path,
         //accepts absolute path and path relative to executable,
-        //can only be called by root,
         //set relativeToExe to true if you want this file to be saved relative to the exe dir,
         //otherwise it must be a full path whose parent directory exists,
-        //set override to true if you want to overwrite the file at the existing path
+        //set override to true if you want to overwrite the file at the existing path,
+        //can only be called by root
         static void SaveUserList(
             u32 callerID,
             const path& userListPath,
@@ -80,7 +80,8 @@ namespace KalaDatabase::Core
         //Loads the on-disk user list from a '.txt' file to memory,
         //accepts absolute path and path relative to executable,
         //set relativeToExe to true if you want this file to be loaded relative to the exe dir,
-        //can only be called by root, logs off all logged in users except root
+        //logs off all logged in users except root,
+        //can only be called by root
         static void LoadUserList(
             u32 callerID,
             const path& userListPath,
@@ -90,10 +91,10 @@ namespace KalaDatabase::Core
 
         //Saves the current in-memory database as a '.kdb' file to the target path,
         //accepts absolute path and path relative to executable,
-        //can only be called by root,
         //set relativeToExe to true if you want this file to be saved relative to the exe dir,
         //otherwise it must be a full path whose parent directory exists,
-        //set override to true if you want to overwrite the file at the existing path
+        //set override to true if you want to overwrite the file at the existing path,
+        //can only be called by root
         static void SaveDatabase(
             u32 callerID,
             const path& databasePath,
@@ -102,14 +103,21 @@ namespace KalaDatabase::Core
         //Loads the on-disk database from a '.kdb' file to memory,
         //accepts absolute path and path relative to executable,
         //set relativeToExe to true if you want this file to be loaded relative to the exe dir,
-        //can only be called by root, logs off all logged in users except root
+        //logs off all logged in users except root,
+        //can only be called by root
         static void LoadDatabase(
             u32 callerID,
             const path& databasePath,
             bool relativeToExe = true);
         //Unloads the database from memory, saves to disk before unloading,
-        //can only be called by root, logs off all logged in users except root
+        //logs off all logged in users except root,
+        //can only be called by root
         static void UnloadDatabase(u32 callerID);
+
+        //Returns all active user registry IDs,
+        //requires permission 'U_GET_ACTIVE_USERS'
+        KNODISCARD
+        static const vector<u32>& GetLoggedInUsers(u32 callerID);
         
         //Returns true if user with username is online,
         //requires permission 'U_GET_ACTIVE_USERS'
@@ -136,7 +144,5 @@ namespace KalaDatabase::Core
 
         //Unloads database and user list, clears all tables, fields, users and groups
         static void Shutdown();
-    private:
-        static const vector<u32>& GetLoggedInUsers();
     };
 }

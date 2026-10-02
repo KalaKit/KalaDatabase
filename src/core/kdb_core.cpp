@@ -32,8 +32,6 @@ using std::vector;
 using std::function;
 using std::filesystem::path;
 
-static bool isVerboseLoggingEnabled{};
-
 static path exePath{};
 
 static u32 globalID{};
@@ -45,9 +43,6 @@ static function<void(string, string)> externalHandler{};
 
 namespace KalaDatabase::Core
 {
-    bool KalaDatabaseCore::IsVerboseLoggingEnabled() { return isVerboseLoggingEnabled; }
-    void KalaDatabaseCore::SetVerboseLoggingState(bool newValue) { isVerboseLoggingEnabled = newValue; }
-
     u32 KalaDatabaseCore::GetGlobalID() { return globalID; }
 	void KalaDatabaseCore::SetGlobalID(u32 newID) { globalID = newID; }
 
@@ -151,14 +146,11 @@ namespace KalaDatabase::Core
 
         if (u->username == USER_ROOT)
         {
-            if (isVerboseLoggingEnabled)
-            {
-                LogPrint(
-                    "User '" + u->username + "' with ID '" + to_string(callerID) 
-                    + "' in group '" + g->groupName + "' accessed activity logs.",
-                    "KDB_CORE",
-                    LogType::LOG_VERBOSE);
-            }
+            LogPrint(
+                "User '" + u->username + "' with ID '" + to_string(callerID) 
+                + "' in group '" + g->groupName + "' accessed activity logs.",
+                "KDB_CORE",
+                LogType::LOG_VERBOSE);
 
             return activityLogs;
         }
@@ -226,12 +218,6 @@ namespace KalaDatabase::Core
                 LogType::LOG_ERROR,
                 2);
 
-            return;
-        }
-
-        if (!isVerboseLoggingEnabled
-            && logType == LogType::LOG_VERBOSE)
-        {
             return;
         }
 

@@ -610,6 +610,74 @@ namespace KalaDatabase::Core
         }
     }
 
+    const vector<u32>& Database::GetLoggedInUsers(u32 callerID)
+    {
+        static const vector<u32> empty{};
+
+        if (!isInitialized)
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get logged in users because KalaDatabase has not been initialized!", 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
+
+        if (loggedInUsers.empty())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get logged in users because no users are online!",
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
+
+        pair<User*, Group*> userData{};
+
+        string err = GetUserAndGroup(
+            callerID,
+            "get logged in users",
+            userData);
+        if (!err.empty())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to get logged in users! Reason: " + err, 
+                "KDB_DATABASE",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
+
+        bool isRoot = userData.first->username == USER_ROOT;
+
+        string inGroupMsg = isRoot 
+            ? ""
+            : "in group '" + userData.second->groupName + "'";
+
+        if (isRoot
+            || userData.second->HasUserPermission(User::GetRootUserPersistentID(), UserPermissions::U_GET_ACTIVE_USERS))
+        {
+            KalaDatabaseCore::LogPrint(
+                "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
+                + "' " + inGroupMsg + " requested logged in users.",
+                "KDB_DATABASE",
+                LogType::LOG_INFO);
+
+            return loggedInUsers;
+        }
+
+        KalaDatabaseCore::LogPrint(
+            "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
+            + "' " + inGroupMsg + " and insufficient 'U_GET_ACTIVE_USERS' permission "
+            "requested logged in users!",
+            "KDB_DATABASE",
+            LogType::LOG_WARNING);
+
+        return empty;
+    }
+
     bool Database::IsUserLoggedIn(
         u32 callerID,
         string_view username)
@@ -661,7 +729,7 @@ namespace KalaDatabase::Core
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                + "' " + inGroupMsg + " requested login state for user '" + string(username) + "'",
+                + "' " + inGroupMsg + " requested login state for user '" + string(username) + "'.",
                 "KDB_DATABASE",
                 LogType::LOG_INFO);
 
@@ -1036,6 +1104,4 @@ namespace KalaDatabase::Core
             "KDB_DATABASE",
             LogType::LOG_SUCCESS);
     }
-
-    const vector<u32>& Database::GetLoggedInUsers() { return loggedInUsers; }
 }

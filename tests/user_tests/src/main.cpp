@@ -33,6 +33,23 @@ static User* regularUser{};
 
 static Group* everyoneGroup{};
 
+static void TestUserCreation()
+{
+    Log::Print(
+        "\n"
+        "--------------------\n"
+        "USER CREATE TEST\n"
+        "--------------------\n");
+
+    //valid user create test
+    regularUser = User::Initialize(
+        User::GetRootUserPersistentID(),
+        0,
+        1,
+        "username",
+        "testpass");
+}
+
 static void TestUserListLoad()
 {
     Log::Print(
@@ -65,23 +82,6 @@ static void TestUserListLoad()
     Database::LoadUserList(
         rootUser->GetPersistentID(),
         "test_files/user_list_valid.txt");
-}
-
-static void TestUserCreation()
-{
-    Log::Print(
-        "\n"
-        "--------------------\n"
-        "USER CREATE TEST\n"
-        "--------------------\n");
-
-    //valid user create test
-    regularUser = User::Initialize(
-        User::GetRootUserPersistentID(),
-        0,
-        0,
-        "username",
-        "testpass");
 }
 
 static void TestLogin()
@@ -134,6 +134,12 @@ int main()
         LogType::LOG_INFO);
 
     Log::Print(" ");
+
+    Database::SetVerboseLoggingState(true);
+    Group::SetVerboseLoggingState(true);
+    User::SetVerboseLoggingState(true);
+    Table::SetVerboseLoggingState(true);
+    Field::SetVerboseLoggingState(true);
 
     Database::Initialize();
 
