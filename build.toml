@@ -1,0 +1,50 @@
+[project]
+name="kaladatabase"
+version="0-0-1"
+kmake="project.kmake"
+
+[references]
+dir_kh="../kalaheaders"
+ext_kh="external/kalaheaders"
+
+[windows-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+
+[windows-post-build-sync]
+kd_bin_rel=[ "build/temp/release-windows/kaladatabase.lib", "build/${version}/kaladatabase.lib", "copy" ]
+kd_bin_deb=[ "build/temp/debug-windows/kaladatabased.lib", "build/${version}/kaladatabased.lib", "copy" ]
+kd_include=[ "include", "build/${version}/include", "copy" ]
+kd_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kd_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kd_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
+
+[windows-gnu-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+
+[windows-gnu-post-build-sync]
+kd_bin_rel=[ "build/temp/release-windows-gnu/kaladatabase-gnu.lib", "build/${version}/kaladatabase-gnu.lib", "copy" ]
+kd_bin_deb=[ "build/temp/debug-windows-gnu/kaladatabase-gnud.lib", "build/${version}/kaladatabase-gnud.lib", "copy" ]
+kd_include=[ "include", "build/${version}/include", "copy" ]
+kd_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kd_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kd_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
+
+[linux-sync]
+kh_license=[ "${dir_kh}/LICENSE.md", "${ext_kh}/LICENSE.md", "copy" ]
+kh_readme=[ "${dir_kh}/README.md", "${ext_kh}/README.md", "copy" ]
+kh_include=[ "${dir_kh}/include", "${ext_kh}/include", "copy" ]
+
+[linux-post-build-sync]
+kd_bin_rel=[ "build/temp/release-linux/libkaladatabase.a", "build/${version}/libkaladatabase.a", "copy" ]
+kd_bin_deb=[ "build/temp/debug-linux/libkaladatabased.a", "build/${version}/libkaladatabased.a", "copy" ]
+kd_include=[ "include", "build/${version}/include", "copy" ]
+kd_license=[ "LICENSE.md", "build/${version}/LICENSE.md", "copy" ]
+kd_readme=[ "README.md", "build/${version}/README.md", "copy" ]
+kd_changes=[ "CHANGES.md", "build/${version}/CHANGES.md", "copy" ]
+kh_stuff=[ "${ext_kh}", "build/${version}/kalaheaders", "copy" ]
