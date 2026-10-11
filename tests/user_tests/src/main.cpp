@@ -4,8 +4,10 @@
 //Read LICENSE.md for more information.
 
 #include <string>
+#include <array>
 
 #include "log_utils.hpp"
+#include "password_hasher.hpp"
 
 #include "core/kdb_core.hpp"
 #include "core/kdb_database.hpp"
@@ -17,6 +19,10 @@
 using KalaHeaders::KalaLog::Log;
 using KalaHeaders::KalaLog::LogType;
 
+using KalaHeaders::KalaPasswordHasher::HASH_SIZE_BYTES;
+using KalaHeaders::KalaPasswordHasher::SALT_SIZE_BYTES;
+using KalaHeaders::KalaPasswordHasher::BytesToString;
+
 using KalaDatabase::Core::KalaDatabaseCore;
 using KalaDatabase::Core::Database;
 using KalaDatabase::Users::GROUP_EVERYONE;
@@ -27,6 +33,8 @@ using KalaDatabase::Data::Table;
 using KalaDatabase::Data::Field;
 
 using std::string;
+using std::array;
+using std::pair;
 
 static User* rootUser{};
 static User* regularUser{};
@@ -151,13 +159,18 @@ int main()
             "Failed to get root user after KalaDatabase initialization!");
     }
     
-    TestUserCreation();
+    //TestUserCreation();
+    //TestUserListLoad();
+    //TestLogin();
+    //TestLogout();
 
-    TestUserListLoad();
+    pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>> hashedPassword 
+        = rootUser->GetPassword(rootUser->GetPersistentID());
+    string hashedPasswordString{};
 
-    TestLogin();
+    BytesToString(hashedPassword.first, hashedPasswordString);
 
-    TestLogout();
+    Log::Print("root password: " + hashedPasswordString);
 
     Database::Shutdown();
 

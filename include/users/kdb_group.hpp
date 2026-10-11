@@ -50,7 +50,7 @@ namespace KalaDatabase::Users
 
     //Root has full permission over all users but cannot
     //change its username or modify its permissions,
-    //maximum permission value is 127
+    //maximum permission value is 255
     enum class UserPermissions : u8
     {
         U_CHANGE_USERNAME  = 1 << 0,
@@ -58,8 +58,9 @@ namespace KalaDatabase::Users
         U_DELETE_USERS     = 1 << 2,
         U_LOG_OUT_USERS    = 1 << 3,
         U_CHANGE_GROUP     = 1 << 4,
-        U_CHANGE_PASSWORD  = 1 << 5,
-        U_GET_ACTIVE_USERS = 1 << 6
+        U_GET_PASSWORD     = 1 << 5,
+        U_CHANGE_PASSWORD  = 1 << 6,
+        U_GET_ACTIVE_USERS = 1 << 7
     };
 
     //Root has full permission over all tables,

@@ -259,7 +259,7 @@ namespace KalaDatabase::Users
             {
                 KalaDatabaseCore::LogPrint(
                     "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                    + "' in group '" + userData.second->groupName + "' and insufficient 'root' and 'U_CREATE_USERS' permission "
+                    + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                     "requested to create a user!",
                     "KDB_USER",
                     LogType::LOG_WARNING);
@@ -356,7 +356,54 @@ namespace KalaDatabase::Users
 
     const pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>>& User::GetPassword(u32 callerID) const
     {
+        static const pair<array<u8, HASH_SIZE_BYTES>, array<u8, SALT_SIZE_BYTES>> empty{};
 
+        pair<User*, Group*> userData{};
+
+        string err = GetUserAndGroup(
+            callerID,
+            "load user list",
+            userData);
+        if (!err.empty())
+        {
+            KalaDatabaseCore::LogPrint(
+                "Failed to initialize user '" + string(username) + "'! Reason: " + err, 
+                "KDB_USER",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
+
+        bool isRoot = userData.first->username == USER_ROOT;
+
+        string inGroupMsg = isRoot 
+            ? ""
+            : "in group '" + userData.second->groupName + "'";
+
+        bool canGetPassword = 
+            userData.first->persistentID == callerID
+            || userData.first->username == USER_ROOT
+            || userData.second->HasUserPermission(GetRootUserPersistentID(), UserPermissions::U_GET_PASSWORD);
+
+        if (!canGetPassword)
+        {
+            KalaDatabaseCore::LogPrint(
+                "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
+                + "' " + inGroupMsg + " with insufficient permissions "
+                "requested to get password for user '" + username + "'!",
+                "KDB_USER",
+                LogType::LOG_WARNING);
+
+            return empty;
+        }
+
+        KalaDatabaseCore::LogPrint(
+            "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
+            + "' " + inGroupMsg + " requested password for user '" + username + "'.",
+            "KDB_DATABASE",
+            LogType::LOG_INFO);
+
+        return hashedPassword;
     }
     void User::SetPassword(
         u32 callerID,

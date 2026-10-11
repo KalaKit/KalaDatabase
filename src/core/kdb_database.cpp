@@ -177,8 +177,7 @@ namespace KalaDatabase::Core
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                + "' in group '" + userData.second->groupName + "' and insufficient 'root' permission "
-                "requested user list!",
+                + "' in group '" + userData.second->groupName + "' with insufficient permissions requested user list!",
                 "KDB_DATABASE",
                 LogType::LOG_WARNING);
 
@@ -245,7 +244,7 @@ namespace KalaDatabase::Core
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                + "' in group '" + userData.second->groupName + "' and insufficient 'root' permission "
+                + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                 "requested to save the user list!",
                 "KDB_DATABASE",
                 LogType::LOG_WARNING);
@@ -356,7 +355,7 @@ namespace KalaDatabase::Core
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-                + "' in group '" + userData.second->groupName + "' and insufficient 'root' permission "
+                + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                 "requested to load the user list!",
                 "KDB_DATABASE",
                 LogType::LOG_WARNING);
@@ -670,8 +669,7 @@ namespace KalaDatabase::Core
 
         KalaDatabaseCore::LogPrint(
             "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-            + "' " + inGroupMsg + " and insufficient 'U_GET_ACTIVE_USERS' permission "
-            "requested logged in users!",
+            + "' " + inGroupMsg + " with insufficient permissions requested logged in users!",
             "KDB_DATABASE",
             LogType::LOG_WARNING);
 
@@ -752,7 +750,7 @@ namespace KalaDatabase::Core
 
         KalaDatabaseCore::LogPrint(
             "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
-            + "' " + inGroupMsg + " and insufficient 'U_GET_ACTIVE_USERS' permission "
+            + "' " + inGroupMsg + " with insufficient permissions "
             "requested login state for user '" + string(username) + "'!",
             "KDB_DATABASE",
             LogType::LOG_WARNING);
