@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include <filesystem>
+#include <source_location>
 
 #include "core_utils.hpp"
 #include "log_utils.hpp"
@@ -32,6 +33,7 @@ namespace KalaDatabase::Core
     using std::vector;
     using std::function;
     using std::filesystem::path;
+    using std::source_location;
 
     using KalaHeaders::KalaLog::LogType;
 
@@ -52,23 +54,20 @@ namespace KalaDatabase::Core
 
         static bool IsPersistentIDInUse(u32 persistentID);
 
-		KNODISCARD
-		static path GetExePath();
-
         //Returns all activity logs for this user, cannot be read by anyone except root
         KNODISCARD
 		static const vector<string>& GetActivityLogs(u32 callerID);
 
-        //External handler for force close, overrides local version so external version can do its own action
-        static void SetExternalHandler(function<void(string, string)>&& externalHandler);
+        KNODISCARD
+        static path GetExePath();
 
-        //Force-closes the application and gives a breakpoint, good for hard stops or bad user errors,
-        //assigning a callback via SetExternalHandler will always use whatever is assigned there,
-        //if the callback is unassigned or invalid then it falls back to the local setup
-		KNORETURN
+        static void SetExternalHandler(function<void(string, string, const source_location&)>&& newExternalHandler);
+
+        KNORETURN
         static void ForceClose(
-			string_view title,
-			string_view reason);
+            string_view title,
+            string_view reason,
+            const source_location& location = source_location::current());
     private:
         //Private logger for activity logs,
         //should never be used outside of KalaDatabase internal codebase

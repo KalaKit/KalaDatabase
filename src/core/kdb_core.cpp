@@ -31,15 +31,15 @@ using std::string;
 using std::vector;
 using std::function;
 using std::filesystem::path;
-
-static path exePath{};
+using std::source_location;
 
 static u32 globalID{};
 static u32 persistentID{};
 
 static vector<string> activityLogs{};
 
-static function<void(string, string)> externalHandler{};
+static path exePath{};
+static function<void(string, string, const source_location&)> externalHandler{};
 
 namespace KalaDatabase::Core
 {
@@ -73,50 +73,6 @@ namespace KalaDatabase::Core
 
         return false;
     }
-
-	path KalaDatabaseCore::GetExePath()
-	{
-		if (!exePath.empty()) return exePath;
-
-#if defined(KWIN_ANY)
-		wchar_t buffer[MAX_PATH]{};
-		DWORD length = GetModuleFileNameW(
-			nullptr,
-			buffer,
-			MAX_PATH);
-
-		if (length > 0
-			&& length < MAX_PATH)
-		{	
-			exePath = path(buffer);
-		}
-		else
-		{
-			ForceClose(
-				"KalaWindow core error",
-				"Failed to get path to executable!");
-		}
-#else
-		char buffer[PATH_MAX]{};
-		ssize_t length = readlink(
-			"/proc/self/exe",
-			buffer,
-			sizeof(buffer) - 1);
-
-		if (length > 0)
-		{
-			buffer[length] = '\0';
-			exePath = path(buffer);
-		}
-		else
-		{
-			ForceClose(
-				"KalaWindow core error",
-				"Failed to get path to executable!");
-		}
-#endif
-		return exePath;
-	}
 
     const vector<string>& KalaDatabaseCore::GetActivityLogs(u32 callerID)
     {
@@ -164,16 +120,65 @@ namespace KalaDatabase::Core
         return empty;
     }
 
-	void KalaDatabaseCore::SetExternalHandler(function<void (string, string)>&& newExternalHandler)
+    path KalaDatabaseCore::GetExePath()
+	{
+		if (!exePath.empty()) return exePath;
+
+		if (exePath.empty())
+		{
+#if defined(KWIN_ANY)
+			wchar_t buffer[MAX_PATH]{};
+			DWORD length = GetModuleFileNameW(
+				nullptr,
+				buffer,
+				MAX_PATH);
+
+			if (length > 0
+				&& length < MAX_PATH)
+			{	
+				exePath = path(buffer);
+			}
+			else
+			{
+				ForceClose(
+					"KalaDatabase core error",
+					"Failed to get path to executable!");
+			}
+#else
+			char buffer[PATH_MAX]{};
+			ssize_t length = readlink(
+				"/proc/self/exe",
+				buffer,
+				sizeof(buffer) - 1);
+
+			if (length > 0)
+			{
+				buffer[length] = '\0';
+				exePath = path(buffer);
+			}
+			else
+			{
+				KalaDatabaseCore::ForceClose(
+					"KalaDatabase core error",
+					"Failed to get path to executable!");
+			}
+#endif
+		}
+
+		return exePath;
+	}
+
+	void KalaDatabaseCore::SetExternalHandler(function<void(string, string, const source_location&)>&& newExternalHandler)
 	{ 
 		externalHandler = std::move(newExternalHandler);
 	}
 
     void KalaDatabaseCore::ForceClose(
-		string_view target,
-		string_view reason)
-	{
-		if (externalHandler) externalHandler(string(target), string(reason));
+        string_view title,
+        string_view reason,
+        const source_location& location)
+    {
+		if (externalHandler) externalHandler(string(title), string(reason), location);
 		else
 		{
 			Log::Print(
@@ -182,9 +187,16 @@ namespace KalaDatabase::Core
 				"\n================\n",
 				true);
 
+            string reasonStr = string(reason);
+            reasonStr 
+                += "\n\nfile: " + string(location.file_name())
+                + "\nfunction: " + string(location.function_name())
+                + "\nline: " + to_string(location.line())
+                + "\ncolumn: " + to_string(location.column());
+
 			Log::Print(
-				reason,
-				target,
+				reasonStr,
+				title,
 				LogType::LOG_ERROR,
 				2,
 				true,
@@ -198,8 +210,8 @@ namespace KalaDatabase::Core
 #endif
 		}
 
-		_Exit(1);
-	}
+        _Exit(1);
+    }
 
     void KalaDatabaseCore::LogPrint(
         string_view message,
