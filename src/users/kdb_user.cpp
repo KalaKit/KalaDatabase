@@ -165,10 +165,23 @@ namespace KalaDatabase::Users
                 return nullptr;
             }
 
-            if (!IsStringInRange(
+            bool outResult{};
+            string err = IsStringInRange(
                 username,
                 MIN_USER_PASS_SIZE,
-                MAX_USER_PASS_SIZE))
+                MAX_USER_PASS_SIZE,
+                outResult);
+
+            if (!err.empty())
+            {
+                KalaDatabaseCore::LogPrint(
+                    "Failed to initialize user! Reason: " + err,
+                    "KDB_USER",
+                    LogType::LOG_WARNING);
+
+                return nullptr;
+            }
+            if (!outResult)
             {
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user because its username length was out of range!",
@@ -178,10 +191,22 @@ namespace KalaDatabase::Users
                 return nullptr;
             }
 
-            if (!IsStringInRange(
+            err = IsStringInRange(
                 password,
                 MIN_USER_PASS_SIZE,
-                MAX_USER_PASS_SIZE))
+                MAX_USER_PASS_SIZE,
+                outResult);
+
+            if (!err.empty())
+            {
+                KalaDatabaseCore::LogPrint(
+                    "Failed to initialize user '" + string(username) + "'! Reason: " + err,
+                    "KDB_USER",
+                    LogType::LOG_WARNING);
+
+                return nullptr;
+            }
+            if (!outResult)
             {
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "' because its password length was out of range!",
