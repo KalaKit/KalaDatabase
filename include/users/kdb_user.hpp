@@ -9,7 +9,6 @@
 #include <vector>
 #include <array>
 
-#include "core_utils.hpp"
 #include "password_hasher.hpp"
 
 #include "core/kdb_registry.hpp"

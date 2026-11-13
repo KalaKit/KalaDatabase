@@ -10,7 +10,6 @@
 #include <array>
 #include <filesystem>
 
-#include "core_utils.hpp"
 #include "password_hasher.hpp"
 
 namespace KalaDatabase::Users

@@ -11,7 +11,6 @@
 #include <filesystem>
 #include <source_location>
 
-#include "core_utils.hpp"
 #include "log_utils.hpp"
 
 namespace KalaDatabase::Users

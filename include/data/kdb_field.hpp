@@ -7,8 +7,6 @@
 
 #include <string>
 
-#include "core_utils.hpp"
-
 #include "core/kdb_registry.hpp"
 
 namespace KalaDatabase::Core
