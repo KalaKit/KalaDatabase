@@ -39,11 +39,11 @@ namespace KalaDatabase::Users
     //maximum permission value is 31
     enum class GroupPermissions : u8
     {
-        G_RENAME_GROUPS            = 1 << 0,
-        G_READ_GROUP_PERMISSIONS   = 1 << 1,
-        G_CHANGE_GROUP_PERMISSIONS = 1 << 2,
-        G_CREATE_GROUPS            = 1 << 3,
-        G_DELETE_GROUPS            = 1 << 4
+        RENAME_GROUPS            = 1 << 0,
+        READ_GROUP_PERMISSIONS   = 1 << 1,
+        CHANGE_GROUP_PERMISSIONS = 1 << 2,
+        CREATE_GROUPS            = 1 << 3,
+        DELETE_GROUPS            = 1 << 4
     };
 
     //Root has full permission over all users but cannot
@@ -51,30 +51,30 @@ namespace KalaDatabase::Users
     //maximum permission value is 255
     enum class UserPermissions : u8
     {
-        U_CHANGE_USERNAME  = 1 << 0,
-        U_CREATE_USERS     = 1 << 1,
-        U_DELETE_USERS     = 1 << 2,
-        U_LOG_OUT_USERS    = 1 << 3,
-        U_CHANGE_GROUP     = 1 << 4,
-        U_GET_PASSWORD     = 1 << 5,
-        U_CHANGE_PASSWORD  = 1 << 6,
-        U_GET_ACTIVE_USERS = 1 << 7
+        CHANGE_USERNAME  = 1 << 0,
+        CREATE_USERS     = 1 << 1,
+        DELETE_USERS     = 1 << 2,
+        LOG_OUT_USERS    = 1 << 3,
+        CHANGE_GROUP     = 1 << 4,
+        GET_PASSWORD     = 1 << 5,
+        CHANGE_PASSWORD  = 1 << 6,
+        GET_ACTIVE_USERS = 1 << 7
     };
 
     //Root has full permission over all tables,
     //tables which are not listed in the tableIDs vector cannot be
-    //read or edited at all unless this group has T_MODIFY_ALL_FIELDS permission,
-    //using T_MODIFY_ALL_TABLES ignores tableIDs restriction entirely,
+    //read or edited at all unless this group has MODIFY_ALL_FIELDS permission,
+    //using MODIFY_ALL_TABLES ignores tableIDs restriction entirely,
     //maximum permission value is 127
     enum class TablePermissions : u8
     {
-        T_SET_TABLE_OWNER      = 1 << 0,
-        T_ADD_REMOVE_SUBTABLES = 1 << 1,
-        T_ADD_REMOVE_FIELDS    = 1 << 2,
-        T_MODIFY_ALL_FIELDS    = 1 << 3,
-        T_MODIFY_ALL_TABLES    = 1 << 4,
-        T_CREATE_TABLES        = 1 << 5,
-        T_DELETE_TABLES        = 1 << 6
+        SET_TABLE_OWNER      = 1 << 0,
+        ADD_REMOVE_SUBTABLES = 1 << 1,
+        ADD_REMOVE_FIELDS    = 1 << 2,
+        MODIFY_ALL_FIELDS    = 1 << 3,
+        MODIFY_ALL_TABLES    = 1 << 4,
+        CREATE_TABLES        = 1 << 5,
+        DELETE_TABLES        = 1 << 6
     };
 
     class LIB_API Group

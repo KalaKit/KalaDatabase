@@ -657,7 +657,9 @@ namespace KalaDatabase::Core
             : "in group '" + userData.second->groupName + "'";
 
         if (isRoot
-            || userData.second->HasUserPermission(User::GetRootUserPersistentID(), UserPermissions::U_GET_ACTIVE_USERS))
+            || userData.second->HasUserPermission(
+            User::GetRootUserPersistentID(), 
+            UserPermissions::GET_ACTIVE_USERS))
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
@@ -724,7 +726,9 @@ namespace KalaDatabase::Core
             : "in group '" + userData.second->groupName + "'";
 
         if (isRoot
-            || userData.second->HasUserPermission(User::GetRootUserPersistentID(), UserPermissions::U_GET_ACTIVE_USERS))
+            || userData.second->HasUserPermission(
+            User::GetRootUserPersistentID(),
+            UserPermissions::GET_ACTIVE_USERS))
         {
             KalaDatabaseCore::LogPrint(
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
@@ -1005,7 +1009,9 @@ namespace KalaDatabase::Core
         bool canLogOut = 
             callerUserData.first->username == USER_ROOT
             || callerID == user->persistentID
-            || callerUserData.second->HasUserPermission(User::GetRootUserPersistentID(), UserPermissions::U_LOG_OUT_USERS);
+            || callerUserData.second->HasUserPermission(
+            User::GetRootUserPersistentID(),
+            UserPermissions::LOG_OUT_USERS);
 
         if (!canLogOut)
         {

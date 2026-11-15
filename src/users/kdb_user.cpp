@@ -278,7 +278,9 @@ namespace KalaDatabase::Users
 
             bool canCreateUser = 
                 userData.first->username == USER_ROOT
-                || userData.second->HasUserPermission(GetRootUserPersistentID(), UserPermissions::U_CREATE_USERS);
+                || userData.second->HasUserPermission(
+                GetRootUserPersistentID(), 
+                UserPermissions::CREATE_USERS);
 
             if (!canCreateUser)
             {
@@ -408,7 +410,9 @@ namespace KalaDatabase::Users
         bool canGetPassword = 
             userData.first->persistentID == callerID
             || userData.first->username == USER_ROOT
-            || userData.second->HasUserPermission(GetRootUserPersistentID(), UserPermissions::U_GET_PASSWORD);
+            || userData.second->HasUserPermission(
+            GetRootUserPersistentID(),
+            UserPermissions::GET_PASSWORD);
 
         if (!canGetPassword)
         {

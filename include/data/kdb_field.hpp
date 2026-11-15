@@ -26,28 +26,28 @@ namespace KalaDatabase::Data
     static constexpr u8 MIN_FIELD_NAME_SIZE = 4;
     static constexpr u8 MAX_FIELD_NAME_SIZE = 16;
 
-    enum class FieldEditType : u8
+    enum class FieldEditType
     {
         //Owning user can read and write to this field
-        E_PUBLIC = 0,
+        PUBLIC,
         //Owning user can only read this field
-        E_READONLY = 1,
+        READONLY,
         //Owning user cannot read or write to this field
-        E_HIDDEN = 2
+        HIDDEN
     };
 
-    enum class FieldValueType : u8
+    enum class FieldValueType
     {
         //Accepts letters, numbers and symbols
-        V_ANY = 0,
+        ANY,
         //Only accepts letters and numbers
-        V_TEXT_ONLY = 1,
+        TEXT_ONLY,
         //Only accepts numbers
-        V_NUMBER_ONLY = 2,
+        NUMBER_ONLY,
         //Only accepts non-decimal numbers
-        V_INTEGER_ONLY = 3,
+        INTEGER_ONLY,
         //Only accepts decimal numbers
-        V_FLOAT_DOUBLE_ONLY = 4
+        FLOAT_DOUBLE_ONLY
     };
 
     class LIB_API Field
