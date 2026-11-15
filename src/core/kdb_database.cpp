@@ -99,7 +99,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to initialize because KalaDatabase is already initialized!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -137,7 +137,7 @@ namespace KalaDatabase::Core
         KalaDatabaseCore::LogPrint(
             "Finished initializing KalaDatabase!",
             "KDB_DATABASE",
-            LogType::LOG_SUCCESS);
+            LogType::SUCCESS);
     }
 
     const path& Database::GetLoadedUserListPath() { return loadedUserListPath; }
@@ -151,7 +151,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get user list because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -167,7 +167,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get user list! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -180,7 +180,7 @@ namespace KalaDatabase::Core
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
                 + "' in group '" + userData.second->groupName + "' with insufficient permissions requested user list!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -192,7 +192,7 @@ namespace KalaDatabase::Core
                 + "' with ID '" + to_string(callerID) 
                 + "' requested user list.",
                 "KDB_DATABASE",
-                LogType::LOG_VERBOSE);
+                LogType::VERBOSE);
         }
 
         return allUsers;
@@ -208,7 +208,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to save user list because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -218,7 +218,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to save user list because there are no users!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -234,7 +234,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to save user list! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -248,7 +248,7 @@ namespace KalaDatabase::Core
                 + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                 "requested to save the user list!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -260,7 +260,7 @@ namespace KalaDatabase::Core
                 "Failed to save user list because user list path "
                 "set as not exe-relative was not absolute!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -298,7 +298,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to save user list! Reason: " + err,
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -307,7 +307,7 @@ namespace KalaDatabase::Core
             "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
             + "' saved user list to path '" + userListPath.string() + "'!",
             "KDB_DATABASE",
-            LogType::LOG_SUCCESS);
+            LogType::SUCCESS);
     }
     void Database::LoadUserList(
         u32 callerID,
@@ -319,7 +319,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to load user list because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -329,7 +329,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to load user list because caller ID was empty!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -345,7 +345,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to load user list! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -359,7 +359,7 @@ namespace KalaDatabase::Core
                 + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                 "requested to load the user list!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -371,7 +371,7 @@ namespace KalaDatabase::Core
                 "Failed to load user list because user list path "
                 "set as not exe-relative was not absolute!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -391,7 +391,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to load user list! Reason: " + err,
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -408,7 +408,7 @@ namespace KalaDatabase::Core
                     KalaDatabaseCore::LogPrint(
                         "Failed to load user list from path '" + userListPath.string() + "' because it had no data!",
                         "KDB_DATABASE",
-                        LogType::LOG_WARNING);
+                        LogType::WARNING);
 
                     return false;
                 }
@@ -425,7 +425,7 @@ namespace KalaDatabase::Core
                             "Failed to load user list from path '" + userListPath.string() + "' "
                             "because line '" + to_string(i) + "' had no spaces!",
                             "KDB_DATABASE",
-                            LogType::LOG_WARNING);
+                            LogType::WARNING);
 
                         return false;
                     }
@@ -438,7 +438,7 @@ namespace KalaDatabase::Core
                             "Failed to load user list from path '" + userListPath.string() + "' "
                             "because line '" + to_string(i) + "' string splitting failed! Reason: " + err,
                             "KDB_DATABASE",
-                            LogType::LOG_WARNING);
+                            LogType::WARNING);
 
                         return false;
                     }
@@ -449,7 +449,7 @@ namespace KalaDatabase::Core
                             "Failed to load user list from path '" + userListPath.string() + "' "
                             "because line '" + to_string(i) + "' has invalid spacing!",
                             "KDB_DATABASE",
-                            LogType::LOG_WARNING);
+                            LogType::WARNING);
 
                         return false;
                     }
@@ -469,7 +469,7 @@ namespace KalaDatabase::Core
                             "Failed to load user list from path '" + userListPath.string() + "' "
                             "because line '" + to_string(i) + "' hashed password was malformed! Reason: " + hashedPasswordError,
                             "KDB_DATABASE",
-                            LogType::LOG_WARNING);
+                            LogType::WARNING);
 
                         return false;
                     }
@@ -484,7 +484,7 @@ namespace KalaDatabase::Core
                             "Failed to load user list from path '" + userListPath.string() + "' "
                             "because line '" + to_string(i) + "' password salt was malformed! Reason: " + passwordSaltError,
                             "KDB_DATABASE",
-                            LogType::LOG_WARNING);
+                            LogType::WARNING);
 
                         return false;
                     }
@@ -503,7 +503,7 @@ namespace KalaDatabase::Core
                         "Failed to load user list from path '" + userListPath.string() + "' "
                         "because duplicate usernames were found!",
                         "KDB_DATABASE",
-                        LogType::LOG_WARNING);
+                        LogType::WARNING);
 
                     return false;
                 }
@@ -514,7 +514,7 @@ namespace KalaDatabase::Core
                         "Failed to load user list from path '" + userListPath.string() + "' "
                         "because no root username was found!",
                         "KDB_DATABASE",
-                        LogType::LOG_WARNING);
+                        LogType::WARNING);
 
                     return false;
                 }
@@ -553,14 +553,14 @@ namespace KalaDatabase::Core
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
                 + "' loaded user list from path '" + userListPath.string() + "'!",
                 "KDB_DATABASE",
-                LogType::LOG_SUCCESS);
+                LogType::SUCCESS);
         }
         else
         {
             KalaDatabaseCore::LogPrint(
                 "Loaded user list from path '" + userListPath.string() + "'!",
                 "KDB_DATABASE",
-                LogType::LOG_SUCCESS);
+                LogType::SUCCESS);
         }
     }
 
@@ -577,7 +577,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to save database because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -592,7 +592,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to load database because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -604,7 +604,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to unload database because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -619,7 +619,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get logged in users because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -629,7 +629,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get logged in users because no users are online!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -645,7 +645,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get logged in users! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -663,7 +663,7 @@ namespace KalaDatabase::Core
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
                 + "' " + inGroupMsg + " requested logged in users.",
                 "KDB_DATABASE",
-                LogType::LOG_INFO);
+                LogType::INFO);
 
             return loggedInUsers;
         }
@@ -672,7 +672,7 @@ namespace KalaDatabase::Core
             "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
             + "' " + inGroupMsg + " with insufficient permissions requested logged in users!",
             "KDB_DATABASE",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return empty;
     }
@@ -686,7 +686,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get user logged in state because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return false;
         }
@@ -696,7 +696,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get logged in state for user '" + string(username) + "' because no users are online!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return false;
         }
@@ -712,7 +712,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to get user logged in state for user '" + string(username) + "'! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return false;
         }
@@ -730,7 +730,7 @@ namespace KalaDatabase::Core
                 "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
                 + "' " + inGroupMsg + " requested login state for user '" + string(username) + "'.",
                 "KDB_DATABASE",
-                LogType::LOG_INFO);
+                LogType::INFO);
 
             for (const u32 uid : loggedInUsers)
             {
@@ -754,7 +754,7 @@ namespace KalaDatabase::Core
             + "' " + inGroupMsg + " with insufficient permissions "
             "requested login state for user '" + string(username) + "'!",
             "KDB_DATABASE",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return false;
     }
@@ -768,7 +768,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log in user because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -778,7 +778,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log in user because username was empty!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -788,7 +788,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log in user '" + string(username) + "' because password was empty!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -799,7 +799,7 @@ namespace KalaDatabase::Core
                 "Failed to log in user '" + string(username) + "' because user list was empty! "
                 "Make sure to load user list before logging in.", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -821,7 +821,7 @@ namespace KalaDatabase::Core
                 "Failed to log in user '" + string(username) + "' because it was not found! "
                 "Did you forget to initialize the user?", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -835,7 +835,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log in user '" + string(username) + "'! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -845,7 +845,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log in user '" + string(username) + "' because root has not yet logged in!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -866,7 +866,7 @@ namespace KalaDatabase::Core
                 KalaDatabaseCore::LogPrint(
                     "Failed to log in user '" + string(username) + "' because it is already logged in!", 
                     "KDB_DATABASE",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return;
             }
@@ -896,7 +896,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "User '" + string(username) + "' has logged in!",
                 "KDB_DATABASE",
-                LogType::LOG_VERBOSE);
+                LogType::VERBOSE);
         }
     }
 
@@ -909,7 +909,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log out user because KalaDatabase has not been initialized!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -919,7 +919,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log out user because username was empty!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -930,7 +930,7 @@ namespace KalaDatabase::Core
                 "Failed to log out user '" + string(username) + "' because user list was empty! "
                 "Make sure to load user list before logging in.", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -952,7 +952,7 @@ namespace KalaDatabase::Core
                 "Failed to log out user '" + string(username) + "' because it was not found! "
                 "Did you forget to initialize the user?", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -968,7 +968,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log out user '" + string(username) + "'! Reason: " + err, 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -997,7 +997,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to log out user '" + string(username) + "' because it is not logged in!", 
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -1014,7 +1014,7 @@ namespace KalaDatabase::Core
                 + "' in group '" + callerUserData.second->groupName + "' and insufficient permissions "
                 "requested to log out user '" + string(username) + "'!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -1052,7 +1052,7 @@ namespace KalaDatabase::Core
                 KalaDatabaseCore::LogPrint(
                     "User '" + string(username) + "' has logged out!",
                     "KDB_DATABASE",
-                    LogType::LOG_VERBOSE);
+                    LogType::VERBOSE);
             }
 
             if (!loggedInUsers.empty())
@@ -1060,7 +1060,7 @@ namespace KalaDatabase::Core
                 KalaDatabaseCore::LogPrint(
                     "User lists were not cleared out after root logged off!",
                     "KDB_DATABASE",
-                    LogType::LOG_ERROR);
+                    LogType::ERROR);
 
                 loggedInUsers.clear();
             }
@@ -1078,7 +1078,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "User '" + string(username) + "' has logged out!",
                 "KDB_DATABASE",
-                LogType::LOG_VERBOSE);
+                LogType::VERBOSE);
         }
     }
 
@@ -1089,7 +1089,7 @@ namespace KalaDatabase::Core
             KalaDatabaseCore::LogPrint(
                 "Failed to shut down because KalaDatabase has not been initialized!",
                 "KDB_DATABASE",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return;
         }
@@ -1101,6 +1101,6 @@ namespace KalaDatabase::Core
         KalaDatabaseCore::LogPrint(
             "Finished KalaDatabase shutdown!",
             "KDB_DATABASE",
-            LogType::LOG_SUCCESS);
+            LogType::SUCCESS);
     }
 }

@@ -74,7 +74,7 @@ namespace KalaDatabase::Data
             KalaDatabaseCore::LogPrint(
                 "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
                 "KDB_FIELD",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -88,7 +88,7 @@ namespace KalaDatabase::Data
             "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
             "KDB_FIELD",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -99,7 +99,7 @@ namespace KalaDatabase::Data
             KalaDatabaseCore::LogPrint(
                 "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
                 "KDB_FIELD",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -113,7 +113,7 @@ namespace KalaDatabase::Data
             "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_FIELD",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -130,7 +130,7 @@ namespace KalaDatabase::Data
             KalaDatabaseCore::LogPrint(
                 "Failed to initialize field because KalaDatabase has not been initialized!",
                 "KDB_FIELD",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return nullptr;
         }

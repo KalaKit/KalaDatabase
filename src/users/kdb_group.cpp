@@ -82,7 +82,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
                 "KDB_GROUP",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -96,7 +96,7 @@ namespace KalaDatabase::Users
             "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
             "KDB_USER",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -107,7 +107,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
                 "KDB_GROUP",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -121,7 +121,7 @@ namespace KalaDatabase::Users
             "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_GROUP",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -145,7 +145,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to initialize group because KalaDatabase has not been initialized!",
                 "KDB_GROUP",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return nullptr;
         }
@@ -180,7 +180,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Initialized group '" + string(groupName) + "' via caller ID '" + to_string(callerID) + "'!",
                 "KDB_GROUP",
-                LogType::LOG_VERBOSE);
+                LogType::VERBOSE);
         }
 
         return groupPtr;

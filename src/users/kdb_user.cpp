@@ -85,7 +85,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to get registry ID by persistent ID because KalaDatabase has not been initialized!",
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -99,7 +99,7 @@ namespace KalaDatabase::Users
             "Failed to get user registry ID by persistent ID '" 
             + to_string(persistentID) + "' because it was invalid!",
             "KDB_USER",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -110,7 +110,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to get persistent ID by registry ID because KalaDatabase has not been initialized!",
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return 0;
         }
@@ -124,7 +124,7 @@ namespace KalaDatabase::Users
             "Failed to get persistent ID by registry ID '" 
             + to_string(registryID) + "' because it was invalid!",
             "KDB_USER",
-            LogType::LOG_WARNING);
+            LogType::WARNING);
 
         return 0;
     }
@@ -147,7 +147,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to initialize user because KalaDatabase has not been initialized!",
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return nullptr;
         }
@@ -160,7 +160,7 @@ namespace KalaDatabase::Users
                     "Failed to initialize user because username '" 
                     + string(USER_ROOT) + "' is reserved for root user!",
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -177,7 +177,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user! Reason: " + err,
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -186,7 +186,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user because its username length was out of range!",
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -202,7 +202,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "'! Reason: " + err,
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -211,7 +211,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "' because its password length was out of range!",
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -221,7 +221,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "' because caller ID was empty!", 
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -230,7 +230,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "' because group ID was empty!", 
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -241,7 +241,7 @@ namespace KalaDatabase::Users
                     "Failed to initialize user '" + string(username) + "' because persistent ID '" 
                     + to_string(ROOT_USER_PERSISTENT_ID) + "' is reserved for root user!", 
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -253,7 +253,7 @@ namespace KalaDatabase::Users
                 "Failed to initialize user '" + string(username) + "' because persistent ID '" 
                 + to_string(persistentID) + "' is already in use!", 
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return nullptr;
         }
@@ -271,7 +271,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "'! Reason: " + err, 
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -287,7 +287,7 @@ namespace KalaDatabase::Users
                     + "' in group '" + userData.second->groupName + "' with insufficient permissions "
                     "requested to create a user!",
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -305,7 +305,7 @@ namespace KalaDatabase::Users
                 KalaDatabaseCore::LogPrint(
                     "Failed to initialize user '" + string(username) + "'! Reason: " + err,
                     "KDB_USER",
-                    LogType::LOG_WARNING);
+                    LogType::WARNING);
 
                 return nullptr;
             }
@@ -345,7 +345,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Initialized user '" + string(username) + "' via caller ID '" + to_string(callerID) + "'!",
                 "KDB_USER",
-                LogType::LOG_VERBOSE);
+                LogType::VERBOSE);
         }
 
         return userPtr;
@@ -394,7 +394,7 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::LogPrint(
                 "Failed to initialize user '" + string(username) + "'! Reason: " + err, 
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -417,7 +417,7 @@ namespace KalaDatabase::Users
                 + "' " + inGroupMsg + " with insufficient permissions "
                 "requested to get password for user '" + username + "'!",
                 "KDB_USER",
-                LogType::LOG_WARNING);
+                LogType::WARNING);
 
             return empty;
         }
@@ -426,7 +426,7 @@ namespace KalaDatabase::Users
             "User '" + userData.first->username + "' with ID '" + to_string(callerID) 
             + "' " + inGroupMsg + " requested password for user '" + username + "'.",
             "KDB_DATABASE",
-            LogType::LOG_INFO);
+            LogType::INFO);
 
         return hashedPassword;
     }
