@@ -139,7 +139,7 @@ int main()
     Log::Print(
         "Start of tests.",
         "USER_TESTS",
-        LogType::INFO);
+        LogType::LOG_INFO);
 
     Log::Print(" ");
 
@@ -179,7 +179,7 @@ int main()
     Log::Print(
         "End of tests.",
         "USER_TESTS",
-        LogType::INFO);
+        LogType::LOG_INFO);
 
     return 0;
 }

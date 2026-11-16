@@ -85,7 +85,7 @@ namespace KalaDatabase::Core
             LogPrint(
                 "Failed to get activity logs because user ID was invalid! Reason: " + err,
                 "KDB_CORE",
-                LogType::WARNING);
+                LogType::LOG_WARNING);
 
             return empty;
         }
@@ -106,7 +106,7 @@ namespace KalaDatabase::Core
                 "User '" + u->username + "' with ID '" + to_string(callerID) 
                 + "' in group '" + g->groupName + "' accessed activity logs.",
                 "KDB_CORE",
-                LogType::VERBOSE);
+                LogType::LOG_VERBOSE);
 
             return activityLogs;
         }
@@ -115,7 +115,7 @@ namespace KalaDatabase::Core
             "User '" + u->username + "' with ID '" + to_string(callerID) 
             + "' in group '" + g->groupName + "' requested to access activity logs!",
             "KDB_CORE",
-            LogType::WARNING);
+            LogType::LOG_WARNING);
 
         return empty;
     }
@@ -197,7 +197,7 @@ namespace KalaDatabase::Core
 			Log::Print(
 				reasonStr,
 				title,
-				LogType::ERROR,
+				LogType::LOG_ERROR,
 				2,
 				true,
 				TimeFormat::TIME_NONE,
@@ -227,13 +227,13 @@ namespace KalaDatabase::Core
                 "Failed to print log message because neither "
                 "printToConsole or printToActivityLogs was true!",
                 "KDB_CORE",
-                LogType::ERROR,
+                LogType::LOG_ERROR,
                 2);
 
             return;
         }
 
-        if (logType == LogType::DEBUG)
+        if (logType == LogType::LOG_DEBUG)
         {
 #if !defined (KDEBUG)
             return;
@@ -249,18 +249,18 @@ namespace KalaDatabase::Core
             switch (logType)
             {
             default:
-            case LogType::INFO:
+            case LogType::LOG_INFO:
                 break;
-            case LogType::DEBUG:
+            case LogType::LOG_DEBUG:
                 type = "[ DEBUG ] ";
                 break;
-            case LogType::SUCCESS:
+            case LogType::LOG_SUCCESS:
                 type = "[ SUCCESS ] ";
                 break;
-            case LogType::WARNING:
+            case LogType::LOG_WARNING:
                 type = "[ WARNING ] ";
                 break;
-            case LogType::ERROR:
+            case LogType::LOG_ERROR:
                 type = "[ ERROR ] ";
                 break;
             }
