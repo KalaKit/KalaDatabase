@@ -19,7 +19,6 @@ namespace KalaDatabase::Data
 {
     using std::string;
     using std::string_view;
-    using std::default_delete;
 
     using KalaDatabase::Core::KalaDatabaseRegistry;
 
@@ -54,7 +53,7 @@ namespace KalaDatabase::Data
     {
     friend class KalaDatabase::Core::KalaDatabaseCore;
     friend class KalaDatabase::Core::Database;
-	friend struct default_delete<Field>;
+	friend struct KalaDatabaseRegistry<Field>;
     public:
         KNODISCARD
 		static KalaDatabaseRegistry<Field>& GetRegistry();

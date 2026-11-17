@@ -3,8 +3,6 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
-#include <memory>
-
 #include "users/kdb_group.hpp"
 #include "users/kdb_user.hpp"
 #include "core/kdb_core.hpp"
@@ -25,8 +23,6 @@ using KalaDatabase::Users::Group;
 using std::string;
 using std::to_string;
 using std::pair;
-using std::unique_ptr;
-using std::make_unique;
 
 static bool isVerboseLoggingEnabled{};
 
@@ -153,8 +149,14 @@ namespace KalaDatabase::Users
         u32 newID = KalaDatabaseCore::GetGlobalID() + 1;
 		KalaDatabaseCore::SetGlobalID(newID);
 
-		unique_ptr<Group> newGroup = make_unique<Group>();
-		Group* groupPtr = newGroup.get();
+		Group* groupPtr{};
+		string err = registry.AddContent(newID, groupPtr);
+		if (!err.empty())
+		{
+			KalaDatabaseCore::ForceClose(
+				"KalaDatabase group error",
+				"Failed to initialize group '" + string(groupName) + "'! Reason: " + err);
+		}
 
         groupPtr->ID = newID;
         groupPtr->persistentID = persistentID;
@@ -164,16 +166,6 @@ namespace KalaDatabase::Users
         groupPtr->groupPermissions = groupPermissions;
         groupPtr->userPermissions = userPermissions;
         groupPtr->tablePermissions = tablePermissions;
-
-		string err = registry.AddContent(
-			newID, 
-			std::move(newGroup));
-		if (!err.empty())
-		{
-			KalaDatabaseCore::ForceClose(
-				"KalaDatabase group error",
-				"Failed to initialize group '" + string(groupName) + "'! Reason: " + err);
-		}
 
         if (isVerboseLoggingEnabled)
         {

@@ -3,8 +3,6 @@
 //This is free software, and you are welcome to redistribute it under certain conditions.
 //Read LICENSE.md for more information.
 
-#include <memory>
-
 #include "string_utils.hpp"
 
 #include "users/kdb_user.hpp"
@@ -31,8 +29,6 @@ using KalaDatabase::Users::Group;
 using std::string;
 using std::to_string;
 using std::pair;
-using std::unique_ptr;
-using std::make_unique;
 
 static bool isVerboseLoggingEnabled{};
 static bool initializingRootUser{};
@@ -322,8 +318,14 @@ namespace KalaDatabase::Users
             KalaDatabaseCore::SetPersistentID(persistentID);
         }
 
-		unique_ptr<User> newUser = make_unique<User>();
-		User* userPtr = newUser.get();
+		User* userPtr{};
+		string err = registry.AddContent(newID, userPtr);
+		if (!err.empty())
+		{
+			KalaDatabaseCore::ForceClose(
+				"KalaDatabase user error",
+				"Failed to initialize user '" + string(username) + "'! Reason: " + err);
+		}
 
         userPtr->ID = newID;
         userPtr->persistentID = persistentID;
@@ -331,16 +333,6 @@ namespace KalaDatabase::Users
 
         userPtr->username = username;
         userPtr->hashedPassword = std::move(result);
-
-		string err = registry.AddContent(
-			newID, 
-			std::move(newUser));
-		if (!err.empty())
-		{
-			KalaDatabaseCore::ForceClose(
-				"KalaDatabase user error",
-				"Failed to initialize user '" + string(username) + "'! Reason: " + err);
-		}
 
         if (isVerboseLoggingEnabled)
         {

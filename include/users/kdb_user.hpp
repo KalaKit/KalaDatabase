@@ -31,7 +31,6 @@ namespace KalaDatabase::Users
     using std::pair;
     using std::vector;
     using std::array;
-    using std::default_delete;
 
     //Can modify all groups, users, tables and fields, can only read its own user data,
     //cannot be given a group, does not have a group that can be modified,
@@ -52,7 +51,7 @@ namespace KalaDatabase::Users
     friend class KalaDatabase::Core::KalaDatabaseCore;
     friend class KalaDatabase::Core::Database;
     friend class Group;
-	friend struct default_delete<User>;
+	friend struct KalaDatabaseRegistry<User>;
     public:
         KNODISCARD
 		static KalaDatabaseRegistry<User>& GetRegistry();

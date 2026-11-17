@@ -22,7 +22,6 @@ namespace KalaDatabase::Users
     using std::string_view;
     using std::vector;
     using std::pair;
-    using std::default_delete;
 
     using KalaDatabase::Core::KalaDatabaseRegistry;
 
@@ -82,7 +81,7 @@ namespace KalaDatabase::Users
     friend class KalaDatabase::Core::KalaDatabaseCore;
     friend class KalaDatabase::Core::Database;
     friend class User;
-	friend struct default_delete<Group>;
+	friend struct KalaDatabaseRegistry<Group>;
     public:
         KNODISCARD
 		static KalaDatabaseRegistry<Group>& GetRegistry();
